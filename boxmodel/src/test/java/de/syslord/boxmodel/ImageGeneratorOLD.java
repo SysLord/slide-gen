@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 
-public class ImageGenerator {
+public class ImageGeneratorOLD {
 
 	public void drawimage(Consumer<Graphics> graphics, String file) {
 		String pathname = "./" + file + ".png";

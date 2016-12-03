@@ -1,4 +1,4 @@
-package de.syslord.boxmodel.properties;
+package de.syslord.boxmodel;
 
 public enum SizeProperty {
 
