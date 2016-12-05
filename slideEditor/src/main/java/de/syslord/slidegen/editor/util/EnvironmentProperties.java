@@ -1,4 +1,4 @@
-package de.syslord.slidegen.uiedit.util;
+package de.syslord.slidegen.editor.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

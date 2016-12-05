@@ -41,8 +41,19 @@ $v-layout-margin-left: 6px;
 
 @import "../valo/valo";
 
+@mixin window {
 
-@mixin uiedit {
+  .v-window-outerheader {
+    background-color: #BBBBBB;
+  }
+
+  .v-window-contents, .v-window-contents .v-panel {
+    background-color: #EEEEEE;
+  }
+
+}
+
+@mixin slideedit {
   @include valo;
 
   body{
@@ -98,5 +109,19 @@ $v-layout-margin-left: 6px;
    	background-color: #cccccc;
   	border: 5px solid #ee1115;
   }
+  
+  .editor-textbox {
+  	word-wrap: break-word !important;
+  	white-space: normal;
+  	overflow: hidden;
+  }
+  
+  .properties-window {
+  	@include window;
+  	
+  	
+  }
+  
+  
   
 }

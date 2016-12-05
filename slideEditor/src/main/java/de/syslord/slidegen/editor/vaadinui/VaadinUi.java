@@ -1,4 +1,4 @@
-package de.syslord.slidegen.uiedit.vaadinui;
+package de.syslord.slidegen.editor.vaadinui;
 
 import java.util.Locale;
 
@@ -14,9 +14,9 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-import de.syslord.slidegen.uiedit.view.MainView;
+import de.syslord.slidegen.editor.view.MainView;
 
-@Theme("uiedit")
+@Theme("slideedit")
 @SpringUI
 @Push
 @PreserveOnRefresh

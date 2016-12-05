@@ -2,9 +2,9 @@ package de.syslord.boxmodel;
 
 import java.awt.Color;
 
-import de.syslord.boxmodel.render.RenderType;
-import de.syslord.boxmodel.render.RenderableBox;
-import de.syslord.boxmodel.render.RenderableBoxImpl;
+import de.syslord.boxmodel.renderer.RenderType;
+import de.syslord.boxmodel.renderer.RenderableBox;
+import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class LineBox extends LayoutableBox {
 

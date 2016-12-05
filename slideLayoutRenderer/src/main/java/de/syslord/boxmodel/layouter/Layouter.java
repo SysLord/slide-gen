@@ -3,10 +3,10 @@ package de.syslord.boxmodel.layouter;
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.LineBox;
 import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.SizeProperty;
+import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.Stretch;
 import de.syslord.boxmodel.TextBox;
-import de.syslord.boxmodel.render.RenderHelper;
+import de.syslord.boxmodel.renderer.RenderHelper;
 
 public class Layouter {
 
@@ -82,17 +82,17 @@ public class Layouter {
 	private static void inheritMaxAndFixSizesTopDown(LayoutableBox parent, LayoutableBox box) {
 		// erbe maxsize und fix size von parent box.
 		if (parent != null) {
-			if (parent.hasProp(SizeProperty.FIX)) {
-				int parentFix = (int) parent.getProp(SizeProperty.FIX);
+			if (parent.hasProp(HeightProperty.FIX)) {
+				int parentFix = (int) parent.getProp(HeightProperty.FIX);
 
-				if (box.hasProp(SizeProperty.MAX)
-						&& (int) box.getProp(SizeProperty.MAX) < parentFix) {
+				if (box.hasProp(HeightProperty.MAX)
+						&& (int) box.getProp(HeightProperty.MAX) < parentFix) {
 				} else {
-					box.setProp(SizeProperty.MAX, parent.getProp(SizeProperty.FIX));
+					box.setProp(HeightProperty.MAX, parent.getProp(HeightProperty.FIX));
 				}
 
-			} else if (parent.hasProp(SizeProperty.MAX)) {
-				box.setProp(SizeProperty.MAX, parent.getProp(SizeProperty.MAX));
+			} else if (parent.hasProp(HeightProperty.MAX)) {
+				box.setProp(HeightProperty.MAX, parent.getProp(HeightProperty.MAX));
 			}
 		}
 

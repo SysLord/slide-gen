@@ -1,17 +1,20 @@
-package de.syslord.slidegen.uiedit.vaadinui;
+package de.syslord.slidegen.editor.vaadinui;
 
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.stream.Stream;
 
-import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+
+import de.syslord.slidegen.editor.model.UiBox;
+import de.syslord.slidegen.editor.util.UiUtil;
 
 public abstract class BaseEditorView<T> extends BaseView<T> {
 
@@ -19,23 +22,13 @@ public abstract class BaseEditorView<T> extends BaseView<T> {
 
 	protected AbsoluteLayout editor;
 
-	private VerticalLayout props;
-
-	@Override
-	public void enter(ViewChangeListener.ViewChangeEvent event) {
-		// Only with navigator, otherwise use attach()
-		// presenter.onViewEntered();
-	}
-
-	@Override
-	public void detach() {
-		super.detach();
-	}
+	private GridLayout props;
 
 	protected abstract void onEditableComponentClicked(Component clickedComponent);
 
 	protected Component createProperties() {
-		props = new VerticalLayout();
+		props = new GridLayout(10, 1);
+		props.setHideEmptyRowsAndColumns(true);
 		props.setMargin(true);
 		props.setSpacing(true);
 		props.setSizeFull();
@@ -47,7 +40,29 @@ public abstract class BaseEditorView<T> extends BaseView<T> {
 	}
 
 	protected void addProperty(Component component) {
+		setPropertyStyle(component);
 		props.addComponent(component);
+	}
+
+	protected void addProperties(Component... components) {
+		Stream.of(components).forEach(c -> setPropertyStyle(c));
+		props.addComponent(new VerticalLayout(components));
+	}
+
+	protected void addProperties(int index, Component... components) {
+		Stream.of(components).forEach(c -> setPropertyStyle(c));
+
+		VerticalLayout gridComponent = (VerticalLayout) props.getComponent(index, 0);
+		if (gridComponent == null) {
+			gridComponent = new VerticalLayout();
+			props.addComponent(gridComponent, index, 0);
+		}
+
+		gridComponent.addComponents(components);
+	}
+
+	private void setPropertyStyle(Component component) {
+		component.setWidth("100px");
 	}
 
 	protected Component createEditor(int width, int height) {
@@ -72,14 +87,52 @@ public abstract class BaseEditorView<T> extends BaseView<T> {
 		}
 	}
 
-	protected void addToBox(AbsoluteLayout absoluteLayout, Component component, float x, float y, int width, int height) {
+	private void addToBox(AbsoluteLayout absoluteLayout, Component component, float x, float y, int width, int height) {
+		// make sure every box in editor has uiBox as data
+		if (getUiBox(component) == null) {
+			setUiBox(component, new UiBox());
+		}
+
 		absoluteLayout.addComponent(component);
+
 		ComponentPosition pos = absoluteLayout.new ComponentPosition();
 		pos.setTop(y, Unit.PIXELS);
 		pos.setLeft(x, Unit.PIXELS);
 		absoluteLayout.setPosition(component, pos);
+
 		component.setWidth(String.valueOf(width) + "px");
 		component.setHeight(String.valueOf(height) + "px");
+	}
+
+	protected UiBox getUiBox(Component component) {
+		return UiUtil.getUiBox(component);
+	}
+
+	protected void setUiBox(Component component, UiBox uiBox) {
+		AbstractComponent ac = (AbstractComponent) component;
+		ac.setData(uiBox);
+	}
+
+	protected Label createTextBox(String content, AbsoluteLayout parentBox, float x, float y, int width, int height) {
+		Label textBox = new Label(content);
+		textBox.addStyleName("editor-textbox");
+
+		addToBox(parentBox, textBox, x, y, width, height);
+
+		// TODO for now outline everything for debugging
+		outline(textBox);
+		return textBox;
+	}
+
+	protected AbsoluteLayout createBox(AbsoluteLayout parentBox, float x, float y, int width, int height) {
+		AbsoluteLayout nest = new AbsoluteLayout();
+		nest.addStyleName("editor-box");
+
+		addToBox(parentBox, nest, x, y, width, height);
+
+		// TODO for now outline everything for debugging
+		outline(nest);
+		return nest;
 	}
 
 	protected void outline(Component... c) {
@@ -98,30 +151,6 @@ public abstract class BaseEditorView<T> extends BaseView<T> {
 
 	private Optional<Layout> maybeGetLayout(Component x) {
 		return Layout.class.isAssignableFrom(x.getClass()) ? Optional.of((Layout) x) : Optional.empty();
-	}
-
-	protected TextField createStringPropertyField(String caption, String content, int minval, int maxVal, Consumer<String> c) {
-		TextField field = new TextField(caption, content);
-		field.setConverter(Integer.class);
-		field.addValidator(new IntegerRangeValidator("Position außerhalb des Feldes", minval, maxVal));
-		field.addValueChangeListener(event -> {
-			if (field.isValid()) {
-				c.accept(field.getValue());
-			}
-		});
-		return field;
-	}
-
-	protected TextField createIntegerPropertyField(String caption, Integer content, int minval, int maxVal, Consumer<Integer> c) {
-		TextField field = new TextField(caption, String.valueOf(content));
-		field.setConverter(Integer.class);
-		field.addValidator(new IntegerRangeValidator("Position außerhalb des Feldes", minval, maxVal));
-		field.addValueChangeListener(event -> {
-			if (field.isValid()) {
-				c.accept((Integer) field.getConvertedValue());
-			}
-		});
-		return field;
 	}
 
 	protected void setNewAbsoluteX(AbsoluteLayout layout, Component component, int x) {

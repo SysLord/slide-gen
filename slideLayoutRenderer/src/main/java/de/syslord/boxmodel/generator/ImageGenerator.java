@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.layouter.Layouter;
-import de.syslord.boxmodel.render.RenderableBox;
-import de.syslord.boxmodel.render.Renderer;
+import de.syslord.boxmodel.renderer.RenderableBox;
+import de.syslord.boxmodel.renderer.Renderer;
 
 public class ImageGenerator {
 

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import de.syslord.boxmodel.render.RenderType;
-import de.syslord.boxmodel.render.RenderableBox;
-import de.syslord.boxmodel.render.RenderableBoxImpl;
+import de.syslord.boxmodel.renderer.RenderType;
+import de.syslord.boxmodel.renderer.RenderableBox;
+import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class LayoutableBox {
 
-	private Map<Object, Object> layoutProperties = new HashMap<>();
+	private Map<Object, Integer> layoutProperties = new HashMap<>();
 
 	private List<LayoutableBox> children = new ArrayList<>();
 
@@ -56,6 +56,12 @@ public class LayoutableBox {
 		this.initialHeight = height;
 	}
 
+	public static LayoutableBox createFixedHeightBox(String name, int x, int y, int width, int height) {
+		LayoutableBox box = new LayoutableBox(name, x, y, width, height);
+		box.setProp(HeightProperty.FIX, height);
+		return box;
+	}
+
 	public RenderableBox toRenderable() {
 		return new RenderableBoxImpl("", absoluteX, absoluteY, width, height, margin, padding, null, visible, RenderType.BOX,
 				null);
@@ -89,8 +95,12 @@ public class LayoutableBox {
 		this.heightNeeded = heightNeeded;
 	}
 
-	public void setProp(Object property, Object value) {
-		layoutProperties.put(property, value);
+	public void setProp(Object property, Integer value) {
+		if (value == null) {
+			layoutProperties.remove(property);
+		} else {
+			layoutProperties.put(property, value);
+		}
 	}
 
 	public void setProp(Object property) {
@@ -117,25 +127,25 @@ public class LayoutableBox {
 		return layoutProperties.containsKey(key) && layoutProperties.get(key) == value;
 	}
 
-	public Object getProp(Object key) {
+	public Integer getProp(Object key) {
 		return layoutProperties.get(key);
 	}
 
 	public void setSize(int set, boolean allowShrinking) {
 		int newsize = set;
 
-		if (hasProp(SizeProperty.FIX)) {
-			int fix = (int) getProp(SizeProperty.FIX);
+		if (hasProp(HeightProperty.FIX)) {
+			int fix = getProp(HeightProperty.FIX);
 			newsize = fix;
 		}
-		if (hasProp(SizeProperty.MIN)) {
-			int min = (int) getProp(SizeProperty.MIN);
+		if (hasProp(HeightProperty.MIN)) {
+			int min = getProp(HeightProperty.MIN);
 			if (newsize < min) {
 				newsize = min;
 			}
 		}
-		if (hasProp(SizeProperty.MAX)) {
-			int max = (int) getProp(SizeProperty.MAX);
+		if (hasProp(HeightProperty.MAX)) {
+			int max = getProp(HeightProperty.MAX);
 			if (newsize > max) {
 				newsize = Math.max(max, 0);
 			}
@@ -159,7 +169,7 @@ public class LayoutableBox {
 
 		int newsize = height;
 
-		if (hasProp(SizeProperty.FIX)) {
+		if (hasProp(HeightProperty.FIX)) {
 			if (maxPossibleHeight < height) {
 				// TODO
 				// if (printFixIfCropped) {
@@ -170,7 +180,7 @@ public class LayoutableBox {
 				// visible=false;
 				// }
 			}
-		} else if (hasProp(SizeProperty.MIN)) {
+		} else if (hasProp(HeightProperty.MIN)) {
 			if (maxPossibleHeight < height) {
 				// TODO
 				// if (printMinIfCropped) {

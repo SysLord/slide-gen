@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.SizeProperty;
+import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.TextBox;
 import de.syslord.boxmodel.debug.Lorem;
 
@@ -15,8 +15,8 @@ public class LayouterTest {
 	public void testLayout_MinSize() throws Exception {
 		int initialHeight = 100;
 		LayoutableBox root = new TextBox("root", "", 50, 50, 600, initialHeight);
-		root.setProp(SizeProperty.MAX, 400);
-		root.setProp(SizeProperty.MIN, 200);
+		root.setProp(HeightProperty.MAX, 400);
+		root.setProp(HeightProperty.MIN, 200);
 
 		Layouter.layout(root);
 
@@ -27,8 +27,8 @@ public class LayouterTest {
 	public void testLayout_MaxSize() throws Exception {
 		int initialHeight = 100;
 		LayoutableBox root = new TextBox("root", Lorem.longIpsum, 50, 50, 200, initialHeight);
-		root.setProp(SizeProperty.MAX, 400);
-		root.setProp(SizeProperty.MIN, 200);
+		root.setProp(HeightProperty.MAX, 400);
+		root.setProp(HeightProperty.MIN, 200);
 
 		Layouter.layout(root);
 
@@ -40,7 +40,7 @@ public class LayouterTest {
 	public void testLayout_FixSizeDoesNotAffectRootBox() throws Exception {
 		int initialHeight = 100;
 		LayoutableBox root = new TextBox("root", Lorem.longIpsum, 50, 50, 200, initialHeight);
-		root.setProp(SizeProperty.FIX, 333);
+		root.setProp(HeightProperty.FIX, 333);
 
 		Layouter.layout(root);
 

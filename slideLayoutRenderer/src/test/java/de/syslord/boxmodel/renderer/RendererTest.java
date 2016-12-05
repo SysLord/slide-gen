@@ -1,5 +1,7 @@
 package de.syslord.boxmodel.renderer;
 
+import static org.junit.Assert.assertTrue;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,10 +11,10 @@ import org.junit.Test;
 
 import de.syslord.boxmodel.ImageDisplayer;
 import de.syslord.boxmodel.debug.Lorem;
-import de.syslord.boxmodel.render.FontProvider;
-import de.syslord.boxmodel.render.RenderType;
-import de.syslord.boxmodel.render.RenderableBoxImpl;
-import de.syslord.boxmodel.render.Renderer;
+import de.syslord.boxmodel.renderer.FontProvider;
+import de.syslord.boxmodel.renderer.RenderType;
+import de.syslord.boxmodel.renderer.RenderableBoxImpl;
+import de.syslord.boxmodel.renderer.Renderer;
 
 public class RendererTest {
 
@@ -27,6 +29,9 @@ public class RendererTest {
 				RenderType.TEXT, Color.BLACK);
 
 		BufferedImage render = Renderer.render(1000, 700, Arrays.asList(box, box1, box2));
+
+		// TODO compare with example image
+		assertTrue(render != null);
 
 		ImageDisplayer.showImage(render);
 	}

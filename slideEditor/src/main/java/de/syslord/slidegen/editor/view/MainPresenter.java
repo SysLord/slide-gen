@@ -1,4 +1,4 @@
-package de.syslord.slidegen.uiedit.view;
+package de.syslord.slidegen.editor.view;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +16,7 @@ import com.vaadin.spring.annotation.UIScope;
 
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.generator.ImageGenerator;
-import de.syslord.slidegen.uiedit.vaadinui.BasePresenter;
+import de.syslord.slidegen.editor.vaadinui.BasePresenter;
 
 @UIScope
 @SpringComponent

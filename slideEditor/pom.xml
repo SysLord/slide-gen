@@ -104,8 +104,8 @@
 							<classpathScope>compile</classpathScope>
 							<mainClass>com.vaadin.sass.SassCompiler</mainClass>
 							<arguments>
-								<argument>src/main/resources/VAADIN/themes/uiedit/styles.scss</argument>
-								<argument>src/main/resources/VAADIN/themes/uiedit/styles.css</argument>
+								<argument>${project.basedir}/src/main/resources/VAADIN/themes/slideedit/styles.scss</argument>
+								<argument>${project.basedir}/src/main/resources/VAADIN/themes/slideedit/styles.css</argument>
 							</arguments>
 						</configuration>
 					</execution>

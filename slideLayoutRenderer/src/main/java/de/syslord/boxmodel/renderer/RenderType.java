@@ -1,4 +1,4 @@
-package de.syslord.boxmodel.render;
+package de.syslord.boxmodel.renderer;
 
 public enum RenderType {
 

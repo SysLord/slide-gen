@@ -1,4 +1,4 @@
-package de.syslord.slidegen.uiedit;
+package de.syslord.slidegen.editor.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,14 +12,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.vaadin.spring.annotation.EnableVaadin;
 
 @SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class })
-@ComponentScan(basePackages = "de.syslord.slidegen.uiedit")
+@ComponentScan(basePackages = "de.syslord.slidegen.editor")
 @EnableAsync
 @EnableScheduling
 @Configuration
 @EnableVaadin
-public class UiEdit {
+public class SlideEditorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UiEdit.class, args);
+		SpringApplication.run(SlideEditorApplication.class, args);
 	}
 }

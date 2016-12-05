@@ -1,6 +1,6 @@
 package de.syslord.boxmodel;
 
-public enum SizeProperty {
+public enum HeightProperty {
 
 	FIX,
 	MAX,

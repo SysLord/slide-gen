@@ -1,4 +1,4 @@
-package de.syslord.slidegen.uiedit.view;
+package de.syslord.slidegen.editor.view;
 
 public class Model {
 

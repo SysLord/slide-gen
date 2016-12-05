@@ -2,10 +2,10 @@ package de.syslord.boxmodel;
 
 import java.awt.Font;
 
-import de.syslord.boxmodel.render.FontProvider;
-import de.syslord.boxmodel.render.RenderType;
-import de.syslord.boxmodel.render.RenderableBox;
-import de.syslord.boxmodel.render.RenderableBoxImpl;
+import de.syslord.boxmodel.renderer.FontProvider;
+import de.syslord.boxmodel.renderer.RenderType;
+import de.syslord.boxmodel.renderer.RenderableBox;
+import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class TextBox extends LayoutableBox {
 

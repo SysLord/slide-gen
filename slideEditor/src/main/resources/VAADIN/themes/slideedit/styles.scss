@@ -1,0 +1,7 @@
+@import "slideedit.scss";
+//@import "addons.scss";
+
+.slideedit {
+//  @include addons;
+  @include slideedit;
+}
