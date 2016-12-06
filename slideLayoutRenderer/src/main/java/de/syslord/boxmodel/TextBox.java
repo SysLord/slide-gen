@@ -20,12 +20,14 @@ public class TextBox extends LayoutableBox {
 
 	@Override
 	public RenderableBox toRenderable() {
-		return new RenderableBoxImpl(content,
+		RenderableBoxImpl renderableBoxImpl = new RenderableBoxImpl(content,
 				absoluteX, absoluteY, width, height,
 				margin, padding,
 				font,
 				visible,
 				RenderType.TEXT, foregroundColor);
+		renderableBoxImpl.setBackgroundImage(backgroundImage);
+		return renderableBoxImpl;
 	}
 
 	public String getContent() {

@@ -12,7 +12,6 @@ import com.vaadin.ui.VerticalLayout;
 import de.syslord.slidegen.editor.baseui.BaseView;
 import de.syslord.slidegen.editor.util.Key;
 import de.syslord.slidegen.editor.util.ModifierKey;
-import de.syslord.slidegen.editor.util.ResourceUtil;
 import de.syslord.slidegen.editor.util.UiUtil;
 
 public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> {
@@ -64,7 +63,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 		editor = new Editor(editorLayout);
 		editor.getLayout().addLayoutClickListener(event -> onEditorClicked(event));
-		editor.setBackdropImage(ResourceUtil.getResourceAsStream("slide_backdrop.png"));
+		editor.setBackdropImage("slide_backdrop.png");
 		initArrowKeyListeners();
 
 		VerticalLayout editorWrapper = new VerticalLayout(editorLayout);

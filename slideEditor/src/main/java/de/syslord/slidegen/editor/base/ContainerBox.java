@@ -43,7 +43,7 @@ public class ContainerBox extends UiBox {
 		UiBox textbox = new UiBox(label);
 		textbox.setEditor(editor);
 
-		label.updateStyle(textbox.getUiBoxData());
+		label.updateStyle(textbox.getUiStyleData());
 
 		addToBox(label, x, y, width, height);
 

@@ -2,6 +2,7 @@ package de.syslord.boxmodel.renderer;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.ByteArrayInputStream;
 
 // TODO god object. Might just use LayoutableBox?
 public class RenderableBoxImpl implements RenderableBox {
@@ -27,6 +28,8 @@ public class RenderableBoxImpl implements RenderableBox {
 	private RenderType renderType;
 
 	private Color color;
+
+	private ByteArrayInputStream backgroundImage;
 
 	public RenderableBoxImpl(String content, int x, int y, int width, int height, int margin, int padding, Font font,
 			boolean visible, RenderType renderType, Color color) {
@@ -116,6 +119,14 @@ public class RenderableBoxImpl implements RenderableBox {
 	@Override
 	public Color getForegroundColor() {
 		return color;
+	}
+
+	public void setBackgroundImage(ByteArrayInputStream backgroundImage) {
+		this.backgroundImage = backgroundImage;
+	}
+
+	public ByteArrayInputStream getBackgroundImage() {
+		return backgroundImage;
 	}
 
 }

@@ -20,7 +20,7 @@ public class LayoutableBox {
 
 	protected String name;
 
-	protected ByteArrayInputStream image;
+	protected ByteArrayInputStream backgroundImage;
 
 	protected Color foregroundColor;
 
@@ -69,12 +69,14 @@ public class LayoutableBox {
 	}
 
 	public RenderableBox toRenderable() {
-		return new RenderableBoxImpl(
+		RenderableBoxImpl renderableBoxImpl = new RenderableBoxImpl(
 				"",
 				absoluteX, absoluteY, width, height,
 				margin, padding, null,
 				visible, RenderType.BOX,
 				foregroundColor);
+		renderableBoxImpl.setBackgroundImage(backgroundImage);
+		return renderableBoxImpl;
 	}
 
 	public int getHeightChanged() {
@@ -300,16 +302,8 @@ public class LayoutableBox {
 		return visible;
 	}
 
-	public void setBackgroundImage(ByteArrayInputStream image) {
-		this.image = image;
-	}
-
-	public ByteArrayInputStream getImage() {
-		return image;
-	}
-
-	public Color getForegroundColor() {
-		return foregroundColor;
+	public void setBackgroundImage(ByteArrayInputStream backgroundImage) {
+		this.backgroundImage = backgroundImage;
 	}
 
 	public void setForegroundColor(Color foregroundColor) {

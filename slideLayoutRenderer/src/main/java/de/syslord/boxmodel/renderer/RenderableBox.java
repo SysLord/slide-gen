@@ -2,6 +2,7 @@ package de.syslord.boxmodel.renderer;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.ByteArrayInputStream;
 
 public interface RenderableBox {
 
@@ -37,5 +38,7 @@ public interface RenderableBox {
 	Color getForegroundColor();
 
 	RenderType getRenderType();
+
+	ByteArrayInputStream getBackgroundImage();
 
 }

@@ -22,8 +22,13 @@ public class EditorExporter {
 
 	private static final Logger logger = LoggerFactory.getLogger(EditorExporter.class);
 
+	// TODO creation of root should not be special, reason is mainly that the uiStyleData is not properly
+	// setup.
 	public LayoutableBox exportLayout(Editor editor, int editorWidth, int editorHeight) {
 		LayoutableBox rootBox = LayoutableBox.createFixedHeightBox("root", 0, 0, editorWidth, editorHeight);
+
+		rootBox.setBackgroundImage(editor.getUiStyleData().getImage());
+
 		exportLayout(rootBox, editor);
 		return rootBox;
 	}
@@ -51,7 +56,7 @@ public class EditorExporter {
 				containerToExport.getX(), containerToExport.getY(),
 				containerToExport.getWidth(), containerToExport.getHeight());
 
-		addUiBoxProperties(containerToExport.getUiBoxData(), box);
+		addUiBoxProperties(containerToExport.getUiStyleData(), box);
 		parentBox.addChild(box);
 		return box;
 	}
@@ -61,9 +66,9 @@ public class EditorExporter {
 				childToExport.getValue(),
 				childToExport.getX(), childToExport.getY(),
 				childToExport.getWidth(), childToExport.getHeight());
-		box.setFont(childToExport.getUiBoxData().getFont());
+		box.setFont(childToExport.getUiStyleData().getFont());
 
-		addUiBoxProperties(childToExport.getUiBoxData(), box);
+		addUiBoxProperties(childToExport.getUiStyleData(), box);
 		parentBox.addChild(box);
 	}
 

@@ -141,8 +141,8 @@ public class MainView extends BaseEditorView<Model> {
 		editor.createTextBox(Lorem.ASDASD, 0, 0, 100, 25);
 
 		UiBox fl = editor.createTextBox("Floater", 0, 40, 200, 200);
-		fl.getUiBoxData().setFloatUp(true);
-		fl.getUiBoxData().setFloatDown(true);
+		fl.getUiStyleData().setFloatUp(true);
+		fl.getUiStyleData().setFloatDown(true);
 
 		editor.createTextBox("B", 150, 100, 200, 200);
 
@@ -177,7 +177,7 @@ public class MainView extends BaseEditorView<Model> {
 
 	private void addFontProps(UiBox box, StylableLabel label) {
 		// TODO
-		UiBoxStyleData uiBoxData = box.getUiBoxData();
+		UiBoxStyleData uiBoxData = box.getUiStyleData();
 		int oldSize = uiBoxData.getFont().getSize();
 		boolean oldBold = (uiBoxData.getFont().getStyle() & Font.BOLD) > 0;
 
@@ -207,7 +207,7 @@ public class MainView extends BaseEditorView<Model> {
 
 	private void addColorProps(UiBox box, StylableLabel label) {
 
-		UiBoxStyleData uiBoxStyleData = box.getUiBoxData();
+		UiBoxStyleData uiBoxStyleData = box.getUiStyleData();
 		ColorPickerArea colorPickerArea = fieldFactory.createColorPickerArea(
 				"Float Up", uiBoxStyleData.getForegroundColor(),
 				s -> {
@@ -219,7 +219,7 @@ public class MainView extends BaseEditorView<Model> {
 	}
 
 	private void addDynamicPositioningProps(UiBox box) {
-		UiBoxStyleData uiBoxData = box.getUiBoxData();
+		UiBoxStyleData uiBoxData = box.getUiStyleData();
 
 		CheckBox floatUpCheckbox = fieldFactory.createCheckbox(
 				"Float Up", uiBoxData.getFloatUp(),
@@ -232,7 +232,7 @@ public class MainView extends BaseEditorView<Model> {
 	}
 
 	private void addMinMaxHeightProps(UiBox box) {
-		UiBoxStyleData uiBoxData = box.getUiBoxData();
+		UiBoxStyleData uiBoxData = box.getUiStyleData();
 
 		TextField minHeight = fieldFactory.createNullableIntegerField(
 				"Min Height", uiBoxData.getMinHeight(),

@@ -9,9 +9,13 @@ import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 public class Renderer {
 
@@ -26,6 +30,10 @@ public class Renderer {
 		for (RenderableBox box : boxes) {
 			drawDebugBorders(graphics, box);
 
+			if (box.getBackgroundImage() != null) {
+				drawBackgroundImage(graphics, box);
+			}
+
 			if (box.getRenderType().equals(RenderType.TEXT)) {
 				drawText(graphics, box);
 			} else if (box.getRenderType().equals(RenderType.LINE)) {
@@ -34,6 +42,22 @@ public class Renderer {
 		}
 
 		return image;
+	}
+
+	private static void drawBackgroundImage(Graphics2D graphics, RenderableBox box) {
+
+		ByteArrayInputStream backgroundImage = box.getBackgroundImage();
+		backgroundImage.reset();
+		BufferedImage read;
+		try {
+			read = ImageIO.read(backgroundImage);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		BufferedImage cropped = read.getSubimage(0, 0, box.getWidth(), box.getHeight());
+
+		graphics.drawImage(cropped, box.getX(), box.getY(), box.getWidth(), box.getHeight(), null);
 	}
 
 	private static void drawLine(Graphics2D graphics, RenderableBox box) {
