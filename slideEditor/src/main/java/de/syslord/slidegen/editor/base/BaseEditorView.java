@@ -11,6 +11,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import de.syslord.slidegen.editor.baseui.BaseView;
 import de.syslord.slidegen.editor.util.Key;
+import de.syslord.slidegen.editor.util.ModifierKey;
 import de.syslord.slidegen.editor.util.ResourceUtil;
 import de.syslord.slidegen.editor.util.UiUtil;
 
@@ -73,6 +74,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		return editorWrapper;
 	}
 
+	// TODO does not updat the shown properties. But should do it.
 	public void initArrowKeyListeners() {
 		Consumer<Key> moveLeftRight = key -> {
 			if (currentlySelectedBox != null) {
@@ -89,9 +91,33 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_left", Key.ARROW_LEFT, moveLeftRight));
 		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_down", Key.ARROW_DOWN, moveUpDown));
 		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_up", Key.ARROW_UP, moveUpDown));
+
+		Consumer<Key> changeWidth = key -> {
+			if (currentlySelectedBox != null) {
+				int oldWidth = currentlySelectedBox.getWidth();
+				currentlySelectedBox.setWidth(Key.ARROW_RIGHT.equals(key) ? oldWidth + 20 : oldWidth - 20);
+			}
+		};
+		Consumer<Key> changeHeight = key -> {
+			if (currentlySelectedBox != null) {
+				int oldHeight = currentlySelectedBox.getHeight();
+				currentlySelectedBox.setHeight(Key.ARROW_DOWN.equals(key) ? oldHeight + 20 : oldHeight - 20);
+			}
+		};
+
+		ModifierKey ctrl = ModifierKey.CTRL;
+		editor.getLayout().addShortcutListener(
+				UiUtil.createShortCut("arrow_right", Key.ARROW_RIGHT, changeWidth, ctrl));
+		editor.getLayout().addShortcutListener(
+				UiUtil.createShortCut("arrow_left", Key.ARROW_LEFT, changeWidth, ctrl));
+		editor.getLayout().addShortcutListener(
+				UiUtil.createShortCut("arrow_down", Key.ARROW_DOWN, changeHeight, ctrl));
+		editor.getLayout().addShortcutListener(
+				UiUtil.createShortCut("arrow_up", Key.ARROW_UP, changeHeight, ctrl));
 	}
 
 	private void onDeleteBoxClicked(UiBox clicked) {
+		editor.clearSelection();
 		clicked.remove();
 	}
 
@@ -149,7 +175,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 	}
 
 	public void select(UiBox clickedBox) {
-		editor.removeComponentSelection();
+		editor.clearSelection();
 		editorProperties.clear();
 		currentlySelectedBox = null;
 

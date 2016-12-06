@@ -36,4 +36,8 @@ public class TextBox extends LayoutableBox {
 		return font;
 	}
 
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
 }

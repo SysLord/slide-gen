@@ -1,5 +1,6 @@
 package de.syslord.slidegen.editor.view;
 
+import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -17,6 +18,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ColorPickerArea;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
@@ -30,9 +32,10 @@ import de.syslord.boxmodel.debug.Lorem;
 import de.syslord.slidegen.editor.base.BaseEditorView;
 import de.syslord.slidegen.editor.base.ContainerBox;
 import de.syslord.slidegen.editor.base.PropertyFieldFactory;
+import de.syslord.slidegen.editor.base.StylableLabel;
 import de.syslord.slidegen.editor.base.UiBox;
 import de.syslord.slidegen.editor.glue.EditorExporter;
-import de.syslord.slidegen.editor.model.UiBoxData;
+import de.syslord.slidegen.editor.model.UiBoxStyleData;
 
 @UIScope
 @SpringView(name = MainView.VIEW_NAME)
@@ -157,6 +160,11 @@ public class MainView extends BaseEditorView<Model> {
 		if (clickedBox.componentIsA(Property.class)) {
 			showLabelProps(clickedBox);
 		}
+		if (clickedBox.componentIsA(StylableLabel.class)) {
+			StylableLabel label = clickedBox.getComponentAs();
+			addColorProps(clickedBox, label);
+			addFontProps(clickedBox, label);
+		}
 	}
 
 	private void showLabelProps(UiBox clickedBox) {
@@ -167,8 +175,51 @@ public class MainView extends BaseEditorView<Model> {
 		editorProperties.addProperty(tf);
 	}
 
+	private void addFontProps(UiBox box, StylableLabel label) {
+		// TODO
+		UiBoxStyleData uiBoxData = box.getUiBoxData();
+		int oldSize = uiBoxData.getFont().getSize();
+		boolean oldBold = (uiBoxData.getFont().getStyle() & Font.BOLD) > 0;
+
+		CheckBox boldCheck = fieldFactory.createCheckbox(
+				"Fett", oldBold,
+				s -> {
+					// need to use current font, which maybe updated after prop field creation!
+					Font oldFont = uiBoxData.getFont();
+					Font font = new Font(oldFont.getName(), s ? Font.BOLD : Font.PLAIN, oldFont.getSize());
+					uiBoxData.setFont(font);
+					label.updateStyle(uiBoxData);
+				});
+
+		TextField size = fieldFactory.createIntegerField(
+				"Fontsize", oldSize,
+				1, 400,
+				v -> {
+					// need to use current font, which maybe updated after prop field creation!
+					Font oldFont = uiBoxData.getFont();
+					Font font = new Font(oldFont.getName(), oldFont.getStyle(), v);
+					uiBoxData.setFont(font);
+					label.updateStyle(uiBoxData);
+				});
+
+		editorProperties.addProperties(size, boldCheck);
+	}
+
+	private void addColorProps(UiBox box, StylableLabel label) {
+
+		UiBoxStyleData uiBoxStyleData = box.getUiBoxData();
+		ColorPickerArea colorPickerArea = fieldFactory.createColorPickerArea(
+				"Float Up", uiBoxStyleData.getForegroundColor(),
+				s -> {
+					uiBoxStyleData.setForegroundColor(s);
+					label.updateStyle(uiBoxStyleData);
+				});
+
+		editorProperties.addProperties(colorPickerArea);
+	}
+
 	private void addDynamicPositioningProps(UiBox box) {
-		UiBoxData uiBoxData = box.getUiBoxData();
+		UiBoxStyleData uiBoxData = box.getUiBoxData();
 
 		CheckBox floatUpCheckbox = fieldFactory.createCheckbox(
 				"Float Up", uiBoxData.getFloatUp(),
@@ -181,7 +232,7 @@ public class MainView extends BaseEditorView<Model> {
 	}
 
 	private void addMinMaxHeightProps(UiBox box) {
-		UiBoxData uiBoxData = box.getUiBoxData();
+		UiBoxStyleData uiBoxData = box.getUiBoxData();
 
 		TextField minHeight = fieldFactory.createNullableIntegerField(
 				"Min Height", uiBoxData.getMinHeight(),

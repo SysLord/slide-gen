@@ -3,7 +3,9 @@ package de.syslord.slidegen.editor.base;
 import java.util.function.Consumer;
 
 import com.vaadin.data.validator.IntegerRangeValidator;
+import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ColorPickerArea;
 import com.vaadin.ui.TextField;
 
 public class PropertyFieldFactory {
@@ -65,5 +67,15 @@ public class PropertyFieldFactory {
 			c.accept(checkBox.getValue());
 		});
 		return checkBox;
+	}
+
+	public ColorPickerArea createColorPickerArea(String caption, Color initialColor, Consumer<Color> c) {
+		ColorPickerArea colorPickerArea = new ColorPickerArea(caption, initialColor);
+		colorPickerArea.addColorChangeListener(event -> {
+			Color color = event.getColor();
+			c.accept(color);
+		});
+
+		return colorPickerArea;
 	}
 }

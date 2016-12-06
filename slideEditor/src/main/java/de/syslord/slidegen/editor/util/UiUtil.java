@@ -1,6 +1,7 @@
 package de.syslord.slidegen.editor.util;
 
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.vaadin.event.ShortcutListener;
 
@@ -59,7 +60,11 @@ public class UiUtil {
 	// }
 
 	public static ShortcutListener createShortCut(String caption, Key key, Consumer<Key> action) {
-		ShortcutListener shortcut = new ShortcutListener(caption, key.getCode(), new int[] {}) {
+		return createShortcut(caption, key, action, new int[] {});
+	}
+
+	private static ShortcutListener createShortcut(String caption, Key key, Consumer<Key> action, int[] modifiers) {
+		ShortcutListener shortcut = new ShortcutListener(caption, key.getCode(), modifiers) {
 
 			private static final long serialVersionUID = -2630182663706626973L;
 
@@ -70,5 +75,13 @@ public class UiUtil {
 
 		};
 		return shortcut;
+	}
+
+	public static ShortcutListener createShortCut(String caption, Key key, Consumer<Key> action, ModifierKey... modifiers) {
+		int[] intModifiers = Stream.of(modifiers)
+			.mapToInt(m -> m.getCode())
+			.toArray();
+
+		return createShortcut(caption, key, action, intModifiers);
 	}
 }

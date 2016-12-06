@@ -20,11 +20,6 @@ public class Editor extends ContainerBox {
 		return true;
 	}
 
-	@Override
-	public void removeComponentSelection() {
-		super.removeComponentSelection();
-	}
-
 	public void setBackdropImage(InputStream in) {
 		Assert.notNull(in);
 

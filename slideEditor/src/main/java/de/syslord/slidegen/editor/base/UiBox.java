@@ -9,10 +9,12 @@ import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 
-import de.syslord.slidegen.editor.model.UiBoxData;
+import de.syslord.slidegen.editor.model.UiBoxStyleData;
 import de.syslord.slidegen.editor.util.Numbers;
 
 public class UiBox extends UiObject {
+
+	private static final int SAFETY_MARGIN = 2;
 
 	protected static final String SELECTED_STYLE = "selectedLayout";
 
@@ -20,7 +22,7 @@ public class UiBox extends UiObject {
 
 	protected static final String BOX_STYLE = "editor-box";
 
-	private UiBoxData uiBoxData = new UiBoxData();
+	private UiBoxStyleData uiBoxStyleData = new UiBoxStyleData();
 
 	private AbstractComponent component;
 
@@ -31,6 +33,7 @@ public class UiBox extends UiObject {
 		component.setData(this);
 	}
 
+	// this is dangerous in top down recursion, as we may get a parent
 	public static UiBox of(Component component) {
 		Component c = component;
 
@@ -42,14 +45,14 @@ public class UiBox extends UiObject {
 			.orElseThrow(() -> new RuntimeException("Component outside of editor"));
 	}
 
-	private static Optional<UiBox> getBoxOf(Component component) {
+	protected static Optional<UiBox> getBoxOf(Component component) {
 		AbstractComponent ac = (AbstractComponent) component;
 		UiBox data = (UiBox) ac.getData();
 		return Optional.ofNullable(data);
 	}
 
-	public UiBoxData getUiBoxData() {
-		return uiBoxData;
+	public UiBoxStyleData getUiBoxData() {
+		return uiBoxStyleData;
 	}
 
 	public boolean isEditor() {
@@ -92,14 +95,28 @@ public class UiBox extends UiObject {
 	}
 
 	public void setWidth(int width) {
-		component.setWidth(width, Unit.PIXELS);
+		int space = editor.getWidth() - getX();
+		boolean newWidthFits = space - width > 0;
+
+		if (newWidthFits) {
+			component.setWidth(width, Unit.PIXELS);
+		} else {
+			component.setWidth(space, Unit.PIXELS);
+		}
 	}
 
 	public void setHeight(int height) {
-		component.setHeight(height, Unit.PIXELS);
+		int space = editor.getHeight() - getY();
+		boolean newHeightFits = space - height > 0;
+
+		if (newHeightFits) {
+			component.setHeight(height, Unit.PIXELS);
+		} else {
+			component.setHeight(space, Unit.PIXELS);
+		}
 	}
 
-	public void removeComponentSelection() {
+	public void clearSelection() {
 		component.removeStyleName(SELECTED_STYLE);
 	}
 
@@ -130,8 +147,8 @@ public class UiBox extends UiObject {
 		Float newX = additiv ? oldPosition.getLeftValue() + x : (float) x;
 		Float newY = oldPosition.getTopValue();
 
-		Float saneX = Numbers.limit(newX, 0, editor.getWidth() - 1);
-		Float saneY = Numbers.limit(newY, 0, editor.getHeight() - 1);
+		Float saneX = Numbers.limit(newX, 0, editor.getWidth() - SAFETY_MARGIN);
+		Float saneY = Numbers.limit(newY, 0, editor.getHeight() - SAFETY_MARGIN);
 
 		newPosition.setLeft(saneX, Unit.PIXELS);
 		newPosition.setTop(saneY, Unit.PIXELS);
@@ -148,8 +165,8 @@ public class UiBox extends UiObject {
 		Float newX = oldPosition.getLeftValue();
 		Float newY = additiv ? oldPosition.getTopValue() + y : (float) y;
 
-		Float saneY = Numbers.limit(newY, 0, (int) editor.getLayout().getHeight() - 1);
-		Float saneX = Numbers.limit(newX, 0, (int) editor.getLayout().getWidth() - 1);
+		Float saneY = Numbers.limit(newY, 0, (int) editor.getLayout().getHeight() - SAFETY_MARGIN);
+		Float saneX = Numbers.limit(newX, 0, (int) editor.getLayout().getWidth() - SAFETY_MARGIN);
 
 		newPosition.setLeft(saneX, Unit.PIXELS);
 		newPosition.setTop(saneY, Unit.PIXELS);
@@ -175,7 +192,9 @@ public class UiBox extends UiObject {
 
 	@SuppressWarnings("unchecked")
 	public String getValue() {
-		if (Property.class.isAssignableFrom(Property.class)) {
+		if (StylableLabel.class.isAssignableFrom(component.getClass())) {
+			return ((StylableLabel) component).getText();
+		} else if (Property.class.isAssignableFrom(component.getClass())) {
 			return ((Property<String>) component).getValue();
 		}
 		return "";

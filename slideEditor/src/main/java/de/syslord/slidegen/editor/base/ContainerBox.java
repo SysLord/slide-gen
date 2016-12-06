@@ -8,7 +8,6 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 
 import de.syslord.slidegen.editor.util.StreamUtil;
 
@@ -26,20 +25,25 @@ public class ContainerBox extends UiBox {
 	}
 
 	@Override
-	public void removeComponentSelection() {
+	public void clearSelection() {
+		layout.removeStyleName(SELECTED_STYLE);
+
 		getChildren().stream()
+			// .filter(box -> box.isA(ContainerBox.class))
+			// .map(box -> (ContainerBox) box)
 			.forEach(box -> {
-				layout.removeStyleName(SELECTED_STYLE);
-				box.removeComponentSelection();
+				box.clearSelection();
 			});
 	}
 
 	public UiBox createTextBox(String content, int x, int y, int width, int height) {
-		Label label = new Label(content);
+		StylableLabel label = new StylableLabel(content);
 		label.addStyleName(TEXTBOX_STYLE);
 
 		UiBox textbox = new UiBox(label);
 		textbox.setEditor(editor);
+
+		label.updateStyle(textbox.getUiBoxData());
 
 		addToBox(label, x, y, width, height);
 
@@ -78,7 +82,9 @@ public class ContainerBox extends UiBox {
 	public List<UiBox> getChildren() {
 		return StreamUtil.asStream(layout.iterator())
 			.map(c -> (AbstractComponent) c)
-			.map(ac -> (UiBox) ac.getData())
+			.map(ac -> UiBox.getBoxOf(ac))
+			.filter(o -> o.isPresent())
+			.map(o -> o.get())
 			.collect(Collectors.toList());
 	}
 

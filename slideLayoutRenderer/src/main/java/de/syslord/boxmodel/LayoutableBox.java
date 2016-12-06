@@ -221,8 +221,10 @@ public class LayoutableBox {
 		int newY = set;
 
 		if (newY < y && hasProp(PositionProperty.FLOAT_UP)) {
-			this.y = newY;
+			// float only up to 0
+			this.y = Math.max(0, newY);
 		} else if (newY > y && hasProp(PositionProperty.FLOAT_DOWN)) {
+			// floating off parent area downwards is allowed
 			this.y = newY;
 		}
 	}

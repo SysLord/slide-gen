@@ -1,12 +1,13 @@
 package de.syslord.slidegen.editor.model;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 
+import com.vaadin.shared.ui.colorpicker.Color;
+
 import de.syslord.boxmodel.renderer.FontProvider;
 
-public class UiBoxData {
+public class UiBoxStyleData {
 
 	private Integer maxHeight = null;
 
@@ -16,6 +17,7 @@ public class UiBoxData {
 
 	private boolean floatDown = false;
 
+	// TODO story font metadata and generate font only on export
 	private Font font = FontProvider.getDefaultFont();
 
 	private ByteArrayInputStream image = null;

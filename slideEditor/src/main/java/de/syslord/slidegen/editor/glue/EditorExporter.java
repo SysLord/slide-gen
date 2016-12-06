@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.spring.annotation.SpringComponent;
 
 import de.syslord.boxmodel.HeightProperty;
@@ -14,7 +15,7 @@ import de.syslord.boxmodel.TextBox;
 import de.syslord.slidegen.editor.base.ContainerBox;
 import de.syslord.slidegen.editor.base.Editor;
 import de.syslord.slidegen.editor.base.UiBox;
-import de.syslord.slidegen.editor.model.UiBoxData;
+import de.syslord.slidegen.editor.model.UiBoxStyleData;
 
 @SpringComponent
 public class EditorExporter {
@@ -32,8 +33,6 @@ public class EditorExporter {
 		List<UiBox> children = container.getChildren();
 
 		children.forEach(child -> {
-			// Property: has value/getValue()
-
 			if (child.isA(ContainerBox.class)) {
 				ContainerBox containerBox = (ContainerBox) child;
 				LayoutableBox box = exportContainer(parentBox, containerBox);
@@ -62,12 +61,13 @@ public class EditorExporter {
 				childToExport.getValue(),
 				childToExport.getX(), childToExport.getY(),
 				childToExport.getWidth(), childToExport.getHeight());
+		box.setFont(childToExport.getUiBoxData().getFont());
 
 		addUiBoxProperties(childToExport.getUiBoxData(), box);
 		parentBox.addChild(box);
 	}
 
-	private void addUiBoxProperties(UiBoxData uiBox, LayoutableBox box) {
+	private void addUiBoxProperties(UiBoxStyleData uiBox, LayoutableBox box) {
 		box.setProp(HeightProperty.MIN, uiBox.getMinHeight());
 		box.setProp(HeightProperty.MAX, uiBox.getMaxHeight());
 
@@ -75,7 +75,11 @@ public class EditorExporter {
 		box.setPropIf(PositionProperty.FLOAT_DOWN, uiBox.getFloatDown());
 
 		box.setBackgroundImage(uiBox.getImage());
-		box.setForegroundColor(uiBox.getForegroundColor());
+		Color vaadinColor = uiBox.getForegroundColor();
+
+		// java.awt.Color color = new java.awt.Color(vaadinColor.getRed(), vaadinColor.getGreen(),
+		// vaadinColor.getBlue());
+		box.setForegroundColor(new java.awt.Color(vaadinColor.getRGB()));
 	}
 
 }
