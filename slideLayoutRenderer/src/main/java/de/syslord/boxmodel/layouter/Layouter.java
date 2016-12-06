@@ -1,9 +1,9 @@
 package de.syslord.boxmodel.layouter;
 
+import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.LineBox;
 import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.Stretch;
 import de.syslord.boxmodel.TextBox;
 import de.syslord.boxmodel.renderer.RenderHelper;
@@ -37,13 +37,11 @@ public class Layouter {
 	private static void updateBoxYForEveryBoxChildren(LayoutableBox parent, LayoutableBox box) {
 		int growY = 0;
 		for (LayoutableBox b : box.getChildren()) {
-			if (b.hasProp(PositionProperty.FLOAT)) {
+			if (b.hasProp(PositionProperty.FLOAT_UP) || b.hasProp(PositionProperty.FLOAT_DOWN)) {
 				b.setY(b.getY() + growY);
-				// } else if (b.hasProp(PositionProperty.FIX_BOTTOM)) {
-				// TODO
 			}
 
-			growY += b.getGrownHeight();
+			growY += b.getHeightChanged();
 		}
 
 		for (LayoutableBox b : box.getChildren()) {
@@ -83,10 +81,10 @@ public class Layouter {
 		// erbe maxsize und fix size von parent box.
 		if (parent != null) {
 			if (parent.hasProp(HeightProperty.FIX)) {
-				int parentFix = (int) parent.getProp(HeightProperty.FIX);
+				int parentFix = parent.getProp(HeightProperty.FIX);
 
 				if (box.hasProp(HeightProperty.MAX)
-						&& (int) box.getProp(HeightProperty.MAX) < parentFix) {
+						&& box.getProp(HeightProperty.MAX) < parentFix) {
 				} else {
 					box.setProp(HeightProperty.MAX, parent.getProp(HeightProperty.FIX));
 				}
@@ -104,7 +102,7 @@ public class Layouter {
 
 	private static void applyStretchChildrenToLargestSibling_TopDown(LayoutableBox parent, LayoutableBox box) {
 		int mostGrownChild = box.getChildren().stream()
-			.map(b -> b.getGrownHeight())
+			.map(b -> b.getHeightChanged())
 			.mapToInt(Integer::intValue)
 			.max()
 			.orElse(0);

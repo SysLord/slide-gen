@@ -1,5 +1,7 @@
 package de.syslord.boxmodel;
 
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +18,11 @@ public class LayoutableBox {
 
 	private List<LayoutableBox> children = new ArrayList<>();
 
-	private String name;
+	protected String name;
+
+	protected ByteArrayInputStream image;
+
+	protected Color foregroundColor;
 
 	// fix values
 	protected int x = 0;
@@ -63,16 +69,22 @@ public class LayoutableBox {
 	}
 
 	public RenderableBox toRenderable() {
-		return new RenderableBoxImpl("", absoluteX, absoluteY, width, height, margin, padding, null, visible, RenderType.BOX,
-				null);
+		return new RenderableBoxImpl(
+				"",
+				absoluteX, absoluteY, width, height,
+				margin, padding, null,
+				visible, RenderType.BOX,
+				foregroundColor);
 	}
 
-	public int getGrownHeight() {
+	public int getHeightChanged() {
 		int v = height - initialHeight;
 		if (v < 0) {
 			System.out.println(name + " shrunk!!");
 		}
-		return Math.max(0, v);
+		// TODO maybe needs property: mayRise or something
+		// return Math.max(0, v);
+		return v;
 	}
 
 	public int getContentX() {
@@ -104,7 +116,15 @@ public class LayoutableBox {
 	}
 
 	public void setProp(Object property) {
-		layoutProperties.put(property, null);
+		if (property != null) {
+			layoutProperties.put(property, null);
+		}
+	}
+
+	public void setPropIf(Object property, boolean doSet) {
+		if (doSet) {
+			layoutProperties.put(property, null);
+		}
 	}
 
 	public void addChild(LayoutableBox b) {
@@ -197,6 +217,16 @@ public class LayoutableBox {
 		height = newsize;
 	}
 
+	public void setY(int set) {
+		int newY = set;
+
+		if (newY < y && hasProp(PositionProperty.FLOAT_UP)) {
+			this.y = newY;
+		} else if (newY > y && hasProp(PositionProperty.FLOAT_DOWN)) {
+			this.y = newY;
+		}
+	}
+
 	public Stream<LayoutableBox> streamFlat() {
 		if (getChildren().isEmpty()) {
 			return Stream.of(this);
@@ -260,16 +290,28 @@ public class LayoutableBox {
 		this.absoluteY = absoluteY;
 	}
 
-	public void setY(int y) {
-		this.y = y;
-	}
-
 	public void setAbsoluteX(int absoluteX) {
 		this.absoluteX = absoluteX;
 	}
 
 	public boolean isVisible() {
 		return visible;
+	}
+
+	public void setBackgroundImage(ByteArrayInputStream image) {
+		this.image = image;
+	}
+
+	public ByteArrayInputStream getImage() {
+		return image;
+	}
+
+	public Color getForegroundColor() {
+		return foregroundColor;
+	}
+
+	public void setForegroundColor(Color foregroundColor) {
+		this.foregroundColor = foregroundColor;
 	}
 
 }

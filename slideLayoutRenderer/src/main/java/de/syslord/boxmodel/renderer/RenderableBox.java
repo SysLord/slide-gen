@@ -34,7 +34,7 @@ public interface RenderableBox {
 
 	boolean isVisible();
 
-	Color getColor();
+	Color getForegroundColor();
 
 	RenderType getRenderType();
 

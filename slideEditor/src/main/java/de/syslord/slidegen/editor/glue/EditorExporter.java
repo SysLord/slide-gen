@@ -1,84 +1,81 @@
 package de.syslord.slidegen.editor.glue;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.data.Property;
 import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
-import com.vaadin.ui.Component;
 
 import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.LayoutableBox;
+import de.syslord.boxmodel.PositionProperty;
 import de.syslord.boxmodel.TextBox;
-import de.syslord.slidegen.editor.model.UiBox;
-import de.syslord.slidegen.editor.util.UiUtil;
+import de.syslord.slidegen.editor.base.ContainerBox;
+import de.syslord.slidegen.editor.base.Editor;
+import de.syslord.slidegen.editor.base.UiBox;
+import de.syslord.slidegen.editor.model.UiBoxData;
 
 @SpringComponent
 public class EditorExporter {
 
 	private static final Logger logger = LoggerFactory.getLogger(EditorExporter.class);
 
-	public LayoutableBox exportLayout(AbsoluteLayout editor, int editorWidth, int editorHeight) {
-		LayoutableBox rootBox = LayoutableBox.createFixedHeightBox("root", 0, 0, editorWidth, editorWidth);
-
+	public LayoutableBox exportLayout(Editor editor, int editorWidth, int editorHeight) {
+		LayoutableBox rootBox = LayoutableBox.createFixedHeightBox("root", 0, 0, editorWidth, editorHeight);
 		exportLayout(rootBox, editor);
 		return rootBox;
 	}
 
-	private void exportLayout(LayoutableBox parentBox, AbsoluteLayout parentLayout) {
+	private void exportLayout(LayoutableBox parentBox, ContainerBox container) {
 
-		Iterator<Component> iter = parentLayout.iterator();
-		while (iter.hasNext()) {
-			Component component = iter.next();
-			ComponentPosition position = parentLayout.getPosition(component);
-			UiBox uiBox = UiUtil.getUiBox(component);
+		List<UiBox> children = container.getChildren();
 
+		children.forEach(child -> {
 			// Property: has value/getValue()
-			if (Property.class.isAssignableFrom(component.getClass())) {
-				LayoutableBox box = createTextBox(component, position);
-				addUiBoxProperties(uiBox, box);
-				parentBox.addChild(box);
 
-			} else if (AbsoluteLayout.class.isAssignableFrom(component.getClass())) {
-				AbsoluteLayout layout = (AbsoluteLayout) component;
+			if (child.isA(ContainerBox.class)) {
+				ContainerBox containerBox = (ContainerBox) child;
+				LayoutableBox box = exportContainer(parentBox, containerBox);
 
-				LayoutableBox box = addNestedBox(layout, position);
-				addUiBoxProperties(uiBox, box);
-				parentBox.addChild(box);
-
-				exportLayout(box, layout);
+				exportLayout(box, containerBox);
 			} else {
-				logger.warn("UNKNOWN LAYOUT ELEMENT!!!");
+				exportTextBox(parentBox, child);
 			}
-		}
+
+		});
+
 	}
 
-	private void addUiBoxProperties(UiBox uiBox, LayoutableBox box) {
+	private LayoutableBox exportContainer(LayoutableBox parentBox, ContainerBox containerToExport) {
+		LayoutableBox box = new LayoutableBox("",
+				containerToExport.getX(), containerToExport.getY(),
+				containerToExport.getWidth(), containerToExport.getHeight());
+
+		addUiBoxProperties(containerToExport.getUiBoxData(), box);
+		parentBox.addChild(box);
+		return box;
+	}
+
+	private void exportTextBox(LayoutableBox parentBox, UiBox childToExport) {
+		TextBox box = new TextBox("",
+				childToExport.getValue(),
+				childToExport.getX(), childToExport.getY(),
+				childToExport.getWidth(), childToExport.getHeight());
+
+		addUiBoxProperties(childToExport.getUiBoxData(), box);
+		parentBox.addChild(box);
+	}
+
+	private void addUiBoxProperties(UiBoxData uiBox, LayoutableBox box) {
 		box.setProp(HeightProperty.MIN, uiBox.getMinHeight());
 		box.setProp(HeightProperty.MAX, uiBox.getMaxHeight());
-	}
 
-	private LayoutableBox addNestedBox(AbsoluteLayout layout, ComponentPosition position) {
-		LayoutableBox box = new LayoutableBox("",
-				position.getLeftValue().intValue(), position.getTopValue().intValue(),
-				(int) layout.getWidth(), (int) layout.getHeight());
-		return box;
-	}
+		box.setPropIf(PositionProperty.FLOAT_UP, uiBox.getFloatUp());
+		box.setPropIf(PositionProperty.FLOAT_DOWN, uiBox.getFloatDown());
 
-	private LayoutableBox createTextBox(Component component, ComponentPosition position) {
-		@SuppressWarnings("unchecked")
-		Property<String> property = (Property<String>) component;
-		String value = property.getValue();
-
-		LayoutableBox box = new TextBox("",
-				value,
-				position.getLeftValue().intValue(), position.getTopValue().intValue(),
-				(int) component.getWidth(), (int) component.getHeight());
-		return box;
+		box.setBackgroundImage(uiBox.getImage());
+		box.setForegroundColor(uiBox.getForegroundColor());
 	}
 
 }

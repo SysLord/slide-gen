@@ -29,17 +29,21 @@ public class Renderer {
 			if (box.getRenderType().equals(RenderType.TEXT)) {
 				drawText(graphics, box);
 			} else if (box.getRenderType().equals(RenderType.LINE)) {
-				graphics.setColor(box.getColor());
-				// TODO only horizontal supported
-				graphics.setStroke(new BasicStroke(box.getContentHeight()));
-				// horizontal: height = 0
-				graphics.drawLine(box.getContentX(), box.getContentY(),
-						box.getContentX() + box.getContentWidth(),
-						box.getContentY());
+				drawLine(graphics, box);
 			}
 		}
 
 		return image;
+	}
+
+	private static void drawLine(Graphics2D graphics, RenderableBox box) {
+		graphics.setColor(box.getForegroundColor());
+		// TODO only horizontal supported
+		graphics.setStroke(new BasicStroke(box.getContentHeight()));
+		// horizontal: height = 0
+		graphics.drawLine(box.getContentX(), box.getContentY(),
+				box.getContentX() + box.getContentWidth(),
+				box.getContentY());
 	}
 
 	private static void drawText(Graphics2D graphics, RenderableBox box) {
@@ -47,7 +51,7 @@ public class Renderer {
 			return;
 		}
 
-		graphics.setColor(Color.BLACK);
+		graphics.setColor(box.getForegroundColor());
 
 		AttributedString attributedString = new AttributedString(box.getContent());
 		attributedString.addAttribute(TextAttribute.FONT, box.getFont());

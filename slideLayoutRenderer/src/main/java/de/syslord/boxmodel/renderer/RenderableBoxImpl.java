@@ -114,7 +114,7 @@ public class RenderableBoxImpl implements RenderableBox {
 	}
 
 	@Override
-	public Color getColor() {
+	public Color getForegroundColor() {
 		return color;
 	}
 

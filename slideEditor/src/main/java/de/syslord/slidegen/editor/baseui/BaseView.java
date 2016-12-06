@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.vaadinui;
+package de.syslord.slidegen.editor.baseui;
 
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Component;
@@ -15,6 +15,10 @@ public abstract class BaseView<T> extends CustomComponent implements View {
 
 	public void setModel(T model) {
 		this.model = model;
+	}
+
+	protected void initView() {
+		//
 	}
 
 	public void push(Runnable pushRunnable) {

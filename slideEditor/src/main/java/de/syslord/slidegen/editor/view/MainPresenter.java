@@ -16,7 +16,7 @@ import com.vaadin.spring.annotation.UIScope;
 
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.generator.ImageGenerator;
-import de.syslord.slidegen.editor.vaadinui.BasePresenter;
+import de.syslord.slidegen.editor.baseui.BasePresenter;
 
 @UIScope
 @SpringComponent
@@ -39,7 +39,7 @@ public class MainPresenter extends BasePresenter<Model> implements Serializable 
 		setModel(model);
 		view.setModel(model);
 
-		view.init();
+		view.initView();
 	}
 
 	@Async

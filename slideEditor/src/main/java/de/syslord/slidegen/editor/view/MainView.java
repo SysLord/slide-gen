@@ -8,15 +8,15 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Push;
+import com.vaadin.data.Property;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
@@ -26,10 +26,13 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import de.syslord.boxmodel.LayoutableBox;
+import de.syslord.boxmodel.debug.Lorem;
+import de.syslord.slidegen.editor.base.BaseEditorView;
+import de.syslord.slidegen.editor.base.ContainerBox;
+import de.syslord.slidegen.editor.base.PropertyFieldFactory;
+import de.syslord.slidegen.editor.base.UiBox;
 import de.syslord.slidegen.editor.glue.EditorExporter;
-import de.syslord.slidegen.editor.model.UiBox;
-import de.syslord.slidegen.editor.vaadinui.BaseEditorView;
-import de.syslord.slidegen.editor.vaadinui.FieldFactory;
+import de.syslord.slidegen.editor.model.UiBoxData;
 
 @UIScope
 @SpringView(name = MainView.VIEW_NAME)
@@ -40,7 +43,7 @@ public class MainView extends BaseEditorView<Model> {
 
 	public static final String VIEW_NAME = "slideeditor";
 
-	public final FieldFactory fieldFactory = new FieldFactory();
+	public final PropertyFieldFactory fieldFactory = new PropertyFieldFactory();
 
 	@Autowired
 	private MainPresenter presenter;
@@ -51,14 +54,14 @@ public class MainView extends BaseEditorView<Model> {
 	private VerticalLayout previewImageHolder;
 
 	@PostConstruct
-	private void createUI() {
+	protected void createUI() {
 		presenter.setView(this);
 	}
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
 		// Only with navigator, otherwise use attach()
-		presenter.onViewEntered();
+		// presenter.onViewEntered();
 	}
 
 	@Override
@@ -68,25 +71,37 @@ public class MainView extends BaseEditorView<Model> {
 		presenter.onViewEntered();
 	}
 
-	public void init() {
+	@Override
+	public void initView() {
+		super.initView();
+
 		GridLayout grid = new GridLayout(4, 10);
 		grid.setMargin(true);
 		grid.setSpacing(true);
-		grid.setWidth("100%");
-		// grid.setSizeUndefined();
+		grid.setSizeUndefined();
+
+		// TODO debug
+		grid.addComponent(new Label(), 0, 0);
+		grid.addComponent(new Label(), 1, 1);
 
 		grid.addComponent(
 				createEditor(model.getEditorWidth(), model.getEditorHeight()),
-				0, 0);
+				2, 2);
+		// TODO introduce options to show Properties or preview as window or in page
 		// grid.addComponent(
 		// createProperties(),
 		// 0, 1);
 		// grid.addComponent(
 		// createPreview(),
 		// 1, 0);
-
-		createWindow("Properties", createProperties(), 0, model.getEditorHeight(), 1024, 300);
-		createWindow("Preview", createPreview(), model.getEditorWidth(), 0, model.getEditorWidth(), model.getEditorHeight());
+		createWindow(
+				"Properties", editorProperties.createProperties(),
+				0, model.getEditorHeight(),
+				1024, 300);
+		createWindow(
+				"Preview", createPreview(),
+				model.getEditorWidth(), 0,
+				model.getEditorWidth() + 80, model.getEditorHeight() + 200);
 
 		initEditableLayout();
 
@@ -120,94 +135,92 @@ public class MainView extends BaseEditorView<Model> {
 
 	// TODO Load from boxmodel
 	private void initEditableLayout() {
+		editor.createTextBox(Lorem.ASDASD, 0, 0, 100, 25);
 
-		createTextBox("A", editor, 0, 0, 40, 40);
-		createTextBox("B", editor, 150, 100, 200, 400);
+		UiBox fl = editor.createTextBox("Floater", 0, 40, 200, 200);
+		fl.getUiBoxData().setFloatUp(true);
+		fl.getUiBoxData().setFloatDown(true);
 
-		AbsoluteLayout nest = createBox(editor, 700, 500, 200, 200);
-		createTextBox("X", nest, 10, 10, 20, 20);
+		editor.createTextBox("B", 150, 100, 200, 200);
+
+		ContainerBox nest = editor.createBox(600, 400, 200, 200);
+		nest.createTextBox("X", 10, 10, 20, 20);
 	}
 
 	@Override
-	protected void onEditableComponentClicked(Component clickedComponent) {
-		clearProps();
+	protected void onEditableComponentClicked(UiBox clickedBox) {
+		addPositioningProps(clickedBox);
+		addResizableProps(clickedBox);
+		addMinMaxHeightProps(clickedBox);
+		addDynamicPositioningProps(clickedBox);
 
-		AbsoluteLayout parent = (AbsoluteLayout) clickedComponent.getParent();
-		addPositioningProps(parent, clickedComponent);
-		addResizableProps(clickedComponent);
-		addMinMaxHeightProps(clickedComponent);
-
-		if (Label.class.isAssignableFrom(clickedComponent.getClass())) {
-			showLabelProps((Label) clickedComponent);
-		} else if (Button.class.isAssignableFrom(clickedComponent.getClass())) {
-			showButtonProps((Button) clickedComponent);
+		if (clickedBox.componentIsA(Property.class)) {
+			showLabelProps(clickedBox);
 		}
 	}
 
-	private void showLabelProps(Label clickedComponent) {
-		String value = clickedComponent.getValue();
+	private void showLabelProps(UiBox clickedBox) {
+		String value = clickedBox.getValue();
 
 		TextField tf = new TextField("Text", value);
-		tf.addValueChangeListener(event -> clickedComponent.setValue(tf.getValue()));
-		addProperty(tf);
+		tf.addValueChangeListener(event -> clickedBox.setValue(tf.getValue()));
+		editorProperties.addProperty(tf);
 	}
 
-	private void showButtonProps(Button clickedComponent) {
-		String value = clickedComponent.getCaption();
+	private void addDynamicPositioningProps(UiBox box) {
+		UiBoxData uiBoxData = box.getUiBoxData();
 
-		TextField tf = new TextField("Text", value);
-		tf.addValueChangeListener(event -> clickedComponent.setCaption(tf.getValue()));
-		addProperty(tf);
+		CheckBox floatUpCheckbox = fieldFactory.createCheckbox(
+				"Float Up", uiBoxData.getFloatUp(),
+				s -> uiBoxData.setFloatUp(s));
+		CheckBox floatDownCheckbox = fieldFactory.createCheckbox(
+				"Float Down", uiBoxData.getFloatDown(),
+				s -> uiBoxData.setFloatDown(s));
+
+		editorProperties.addProperties(floatUpCheckbox, floatDownCheckbox);
 	}
 
-	private void addMinMaxHeightProps(Component component) {
-		UiBox uiBox = getUiBox(component);
+	private void addMinMaxHeightProps(UiBox box) {
+		UiBoxData uiBoxData = box.getUiBoxData();
 
-		TextField minHeight = fieldFactory.createNullableIntegerPropertyField(
-				"Min Height", uiBox.getMinHeight(),
+		TextField minHeight = fieldFactory.createNullableIntegerField(
+				"Min Height", uiBoxData.getMinHeight(),
 				1, model.getEditorWidth(),
-				s -> uiBox.setMinHeight(s));
+				s -> uiBoxData.setMinHeight(s));
 
-		TextField maxHeight = fieldFactory.createNullableIntegerPropertyField(
-				"Max Height", uiBox.getMaxHeight(),
+		TextField maxHeight = fieldFactory.createNullableIntegerField(
+				"Max Height", uiBoxData.getMaxHeight(),
 				1, model.getEditorHeight(),
-				s -> uiBox.setMaxHeight(s));
+				s -> uiBoxData.setMaxHeight(s));
 
-		addProperties(minHeight, maxHeight);
+		editorProperties.addProperties(minHeight, maxHeight);
 	}
 
-	private void addResizableProps(Component sizeable) {
-		int width = (int) sizeable.getWidth();
-		int height = (int) sizeable.getHeight();
-
-		TextField widthField = fieldFactory.createIntegerAsStringPropertyField(
-				"Width", String.valueOf(width),
+	private void addResizableProps(UiBox box) {
+		TextField widthField = fieldFactory.createIntegerField(
+				"Width", box.getWidth(),
 				1, model.getEditorWidth(),
-				s -> sizeable.setWidth(s + "px"));
+				v -> box.setWidth(v));
 
-		TextField heightField = fieldFactory.createIntegerAsStringPropertyField(
-				"Height", String.valueOf(height),
+		TextField heightField = fieldFactory.createIntegerField(
+				"Height", box.getHeight(),
 				1, model.getEditorHeight(),
-				s -> sizeable.setHeight(s + "px"));
+				v -> box.setHeight(v));
 
-		addProperties(0, widthField, heightField);
+		editorProperties.addProperties(0, widthField, heightField);
 	}
 
-	private void addPositioningProps(AbsoluteLayout layout, Component component) {
-		ComponentPosition position = layout.getPosition(component);
-		int x = position.getLeftValue().intValue();
-		int y = position.getTopValue().intValue();
-
-		TextField xField = fieldFactory.createIntegerPropertyField(
-				"X", x,
+	private void addPositioningProps(UiBox box) {
+		TextField xField = fieldFactory.createIntegerField(
+				"X", box.getX(),
 				0, model.getEditorWidth(),
-				v -> setNewAbsoluteX(layout, component, v));
+				v -> box.setX(v, false));
 
-		TextField yField = fieldFactory.createIntegerPropertyField(
-				"Y", y,
+		TextField yField = fieldFactory.createIntegerField(
+				"Y", box.getY(),
 				0, model.getEditorHeight(),
-				v -> setNewAbsoluteY(layout, component, v));
-		addProperties(0, xField, yField);
+				v -> box.setY(v, false));
+		editorProperties.addProperties(0, xField, yField);
 	}
 
 	public void showPreview(ByteArrayOutputStream out) {

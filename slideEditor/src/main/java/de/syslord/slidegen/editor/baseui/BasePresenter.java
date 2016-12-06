@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.vaadinui;
+package de.syslord.slidegen.editor.baseui;
 
 public class BasePresenter<T> {
 

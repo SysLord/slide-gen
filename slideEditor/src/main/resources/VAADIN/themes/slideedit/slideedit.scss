@@ -106,8 +106,12 @@ $v-layout-margin-left: 6px;
   }
   
   .editor {
+  	/* editor must not have a border or padding margin, as this will screw with click locations */
    	background-color: #cccccc;
-  	border: 5px solid #ee1115;
+  }
+  
+  .editor-wrapper {
+  	border: 5px solid #aaaaaa;
   }
   
   .editor-textbox {
@@ -118,10 +122,6 @@ $v-layout-margin-left: 6px;
   
   .properties-window {
   	@include window;
-  	
-  	
   }
-  
-  
   
 }

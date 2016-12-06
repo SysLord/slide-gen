@@ -4,7 +4,8 @@ public enum PositionProperty {
 
 	// FIX_TOP,
 	// FIX_BOTTOM,
-	FLOAT;
+	FLOAT_UP,
+	FLOAT_DOWN;
 	// FLOAT_BREAK;
 
 }

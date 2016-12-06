@@ -6,11 +6,11 @@ import java.awt.image.BufferedImage;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.ImageDisplayer;
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.LineBox;
 import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.Stretch;
 import de.syslord.boxmodel.TextBox;
 import de.syslord.boxmodel.debug.Lorem;
@@ -41,19 +41,22 @@ public class ImageGeneratorTest {
 
 		LayoutableBox l = LineBox.createHorizontal("l", 40, 55, 500, 3, Color.GRAY);
 		l.setProp(HeightProperty.FIX, 3);
-		l.setProp(PositionProperty.FLOAT);
+		l.setProp(PositionProperty.FLOAT_DOWN);
+		l.setProp(PositionProperty.FLOAT_UP);
 
 		LayoutableBox line2 = new TextBox("line2", Lorem.Ips, 27, 60, 100, 300);
 		line2.setPadding(10);
 		line2.setProp(HeightProperty.MIN, 1);
 		line2.setProp(HeightProperty.MAX, 300);
-		line2.setProp(PositionProperty.FLOAT);
+		line2.setProp(PositionProperty.FLOAT_DOWN);
+		line2.setProp(PositionProperty.FLOAT_UP);
 
 		LayoutableBox line3 = new TextBox("line3", Lorem.Ipsum, 33, 100, 200, 30);
 		line3.setPadding(7);
 		line3.setProp(HeightProperty.MIN, 30);
 		line3.setProp(HeightProperty.MAX, 100);
-		line3.setProp(PositionProperty.FLOAT);
+		line3.setProp(PositionProperty.FLOAT_DOWN);
+		line3.setProp(PositionProperty.FLOAT_UP);
 
 		nest.addChild(line1);
 		nest.addChild(s);

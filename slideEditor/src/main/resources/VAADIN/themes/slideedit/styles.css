@@ -12981,7 +12981,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .slideedit .editor {
 	background-color: #cccccc;
-	border: 5px solid #ee1115;
+}
+
+.slideedit .editor-wrapper {
+	border: 5px solid #aaaaaa;
 }
 
 .slideedit .editor-textbox {

@@ -1,9 +1,12 @@
-package de.syslord.slidegen.editor.vaadinui;
+package de.syslord.slidegen.editor.baseui;
 
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.gwt.thirdparty.guava.common.base.Throwables;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -24,6 +27,8 @@ public class VaadinUi extends UI {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final Logger logger = LoggerFactory.getLogger(VaadinUi.class);
+
 	@Autowired
 	private MainView mainView;
 
@@ -40,11 +45,23 @@ public class VaadinUi extends UI {
 		getUI().setErrorHandler(errorHandler());
 		// getUI().getNavigator().navigateTo(MainView.VIEW_NAME);
 
+		// ContextWindows.enableContextWindows();
+
 		setContent(mainView);
 	}
 
 	private ErrorHandler errorHandler() {
-		return event -> Notification.show(event.getThrowable().toString(), "Fehler", Type.ERROR_MESSAGE);
+		return event -> {
+			Notification.show(event.getThrowable().toString()
+					+ "\n"
+					+ event.getThrowable().getMessage()
+					+ "\n"
+					+ Throwables.getStackTraceAsString(event.getThrowable()),
+					"Fehler",
+					Type.ERROR_MESSAGE);
+
+			logger.error("", event.getThrowable());
+		};
 	}
 
 }
