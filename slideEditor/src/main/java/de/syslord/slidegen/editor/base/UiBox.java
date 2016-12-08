@@ -33,7 +33,8 @@ public class UiBox extends UiObject {
 		component.setData(this);
 	}
 
-	// this is dangerous in top down recursion, as we may get a parent
+	// This is dangerous in top down recursion, as we may get a parent and produce an endless loop. Use
+	// getBoxOf() instead.
 	public static UiBox of(Component component) {
 		Component c = component;
 
@@ -45,6 +46,8 @@ public class UiBox extends UiObject {
 			.orElseThrow(() -> new RuntimeException("Component outside of editor"));
 	}
 
+	// This enables us to skip ui elements that are present in the editor component tree but should be
+	// ignored.
 	protected static Optional<UiBox> getBoxOf(Component component) {
 		AbstractComponent ac = (AbstractComponent) component;
 		UiBox data = (UiBox) ac.getData();
@@ -138,7 +141,10 @@ public class UiBox extends UiObject {
 		if (!isEditor()) {
 			ContainerBox parent = getParent();
 			AbsoluteLayout containerLayout = parent.getLayout();
-			push(() -> containerLayout.removeComponent(component));
+
+			// should not need push as long as this is a ui thread
+			// push(() -> containerLayout.removeComponent(component));
+			containerLayout.removeComponent(component);
 		}
 	}
 

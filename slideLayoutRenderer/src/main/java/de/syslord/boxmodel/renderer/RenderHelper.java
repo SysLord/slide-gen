@@ -39,7 +39,6 @@ public class RenderHelper {
 		}
 
 		int heightNeeded = lines * fontHeight;
-		System.out.println("height needed " + String.valueOf(heightNeeded) + " of " + content);
 		return heightNeeded;
 	}
 
@@ -66,19 +65,14 @@ public class RenderHelper {
 			// TextLayout layout = lineBreakMeasurer.nextLayout(contentWidth);
 
 			y += layout.getAscent();
-
-			// // do not render lines outside of box content area
-			// if (y > contentY + contentHeight) {
-			// break;
-			// }
-
 			y += layout.getDescent() + layout.getLeading();
 		}
 
-		System.out.println("height needed " + String.valueOf(y) + " of " + content);
 		return (int) Math.ceil(y);
 	}
 
+	// centralize image and graphics acquisition to make sure the text space requirements are the same as
+	// during text rendering later
 	public static Graphics2D getGraphics(BufferedImage image) {
 		Graphics2D graphics = image.createGraphics();
 

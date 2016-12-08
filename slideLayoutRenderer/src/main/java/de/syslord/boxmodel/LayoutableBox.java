@@ -79,11 +79,7 @@ public class LayoutableBox {
 	}
 
 	public int getHeightChanged() {
-		int v = height - initialHeight;
-		if (v < 0) {
-			System.out.println(name + " shrunk!!");
-		}
-		return v;
+		return height - initialHeight;
 	}
 
 	public int getContentX() {
@@ -171,10 +167,6 @@ public class LayoutableBox {
 		}
 
 		if (allowShrinking || newsize > height) {
-
-			if (newsize < height) {
-				System.out.println("shrinking!");
-			}
 			height = newsize;
 		}
 	}

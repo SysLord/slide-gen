@@ -70,13 +70,9 @@ public class MainView extends BaseEditorView<Model> {
 		grid.setSpacing(true);
 		grid.setSizeUndefined();
 
-		// TODO debug
-		// grid.addComponent(new Button("Chrome fix"), 0, 0, 0, 1);
-		// grid.addComponent(new Label(), 1, 1);
-
 		grid.addComponent(
 				createEditor(model.getEditorWidth(), model.getEditorHeight()),
-				2, 2);
+				0, 0);
 		// TODO introduce options to show Properties or preview as window or in page
 		// grid.addComponent(
 		// createProperties(),

@@ -27,7 +27,7 @@ public class Editor extends ContainerBox {
 
 		StreamResource source = new StreamResource(() -> {
 			// Stream needs to be created here as a page refresh will try to reread the resource which will
-			// fail even with reset()
+			// fail even with in.reset()
 			ByteArrayInputStream in = ResourceUtil.getResourceAsStream(backgroundImageResource);
 			Assert.notNull(in);
 
@@ -36,6 +36,7 @@ public class Editor extends ContainerBox {
 		Image image = new Image("", source);
 		image.setSizeFull();
 
+		// The background must be an image component but it will be ignored without a UiBox as data.
 		getLayout().addComponent(image);
 	}
 
