@@ -142,14 +142,14 @@ public class UiBox extends UiObject {
 		}
 	}
 
-	public void setX(int x, boolean additiv) {
+	public void setX(int x, boolean adding) {
 		ContainerBox parent = getParent();
 		AbsoluteLayout containerLayout = parent.getLayout();
 
 		ComponentPosition oldPosition = containerLayout.getPosition(component);
 		ComponentPosition newPosition = containerLayout.new ComponentPosition();
 
-		Float newX = additiv ? oldPosition.getLeftValue() + x : (float) x;
+		Float newX = adding ? oldPosition.getLeftValue() + x : (float) x;
 		Float newY = oldPosition.getTopValue();
 
 		Float saneX = Numbers.limit(newX, 0, parent.getWidth() - SAFETY_MARGIN);
@@ -161,7 +161,7 @@ public class UiBox extends UiObject {
 		containerLayout.setPosition(component, newPosition);
 	}
 
-	public void setY(int y, boolean additiv) {
+	public void setY(int y, boolean adding) {
 		ContainerBox parent = getParent();
 		AbsoluteLayout containerLayout = parent.getLayout();
 
@@ -169,7 +169,7 @@ public class UiBox extends UiObject {
 		ComponentPosition newPosition = containerLayout.new ComponentPosition();
 
 		Float newX = oldPosition.getLeftValue();
-		Float newY = additiv ? oldPosition.getTopValue() + y : (float) y;
+		Float newY = adding ? oldPosition.getTopValue() + y : (float) y;
 
 		Float saneY = Numbers.limit(newY, 0, (int) parent.getLayout().getHeight() - SAFETY_MARGIN);
 		Float saneX = Numbers.limit(newX, 0, (int) parent.getLayout().getWidth() - SAFETY_MARGIN);

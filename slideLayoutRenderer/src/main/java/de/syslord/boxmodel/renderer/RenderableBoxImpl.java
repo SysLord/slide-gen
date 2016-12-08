@@ -4,10 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 
-// TODO god object. Might just use LayoutableBox?
+//TODO 08.12.2016 needs a proper builder when architecutre relatively stable
 public class RenderableBoxImpl implements RenderableBox {
 
-	private String content;
+	private String content = "";
+
+	private Font font = FontProvider.getDefaultFont();
+
+	private RenderType renderType = RenderType.BOX;
+
+	private Color color = Color.BLACK;
 
 	private int x;
 
@@ -21,29 +27,26 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	private int padding;
 
-	private Font font;
-
 	private boolean visible;
-
-	private RenderType renderType;
-
-	private Color color;
 
 	private ByteArrayInputStream backgroundImage;
 
-	public RenderableBoxImpl(String content, int x, int y, int width, int height, int margin, int padding, Font font,
-			boolean visible, RenderType renderType, Color color) {
-		this.content = content;
+	public RenderableBoxImpl(int x, int y, int width, int height, int margin, int padding, boolean visible) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.margin = margin;
 		this.padding = padding;
-		this.font = font;
 		this.visible = visible;
-		this.renderType = renderType;
-		this.color = color;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
 	}
 
 	@Override
@@ -117,7 +120,7 @@ public class RenderableBoxImpl implements RenderableBox {
 	}
 
 	@Override
-	public Color getForegroundColor() {
+	public Color getColor() {
 		return color;
 	}
 
@@ -125,8 +128,17 @@ public class RenderableBoxImpl implements RenderableBox {
 		this.backgroundImage = backgroundImage;
 	}
 
+	@Override
 	public ByteArrayInputStream getBackgroundImage() {
 		return backgroundImage;
+	}
+
+	public void setRenderType(RenderType renderType) {
+		this.renderType = renderType;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 }

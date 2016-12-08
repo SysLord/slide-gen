@@ -3,7 +3,6 @@ package de.syslord.boxmodel;
 import java.awt.Color;
 
 import de.syslord.boxmodel.renderer.RenderType;
-import de.syslord.boxmodel.renderer.RenderableBox;
 import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class LineBox extends LayoutableBox {
@@ -25,14 +24,12 @@ public class LineBox extends LayoutableBox {
 	}
 
 	@Override
-	public RenderableBox toRenderable() {
-		return new RenderableBoxImpl(
-				"",
-				absoluteX, absoluteY, width, height,
-				margin, padding, null,
-				visible,
-				RenderType.LINE,
-				foregroundColor);
+	public RenderableBoxImpl toRenderable() {
+		RenderableBoxImpl renderableBoxImpl = super.toRenderable();
+
+		renderableBoxImpl.setRenderType(RenderType.LINE);
+
+		return renderableBoxImpl;
 	}
 
 }

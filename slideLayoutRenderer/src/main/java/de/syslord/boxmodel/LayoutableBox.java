@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import de.syslord.boxmodel.renderer.RenderType;
-import de.syslord.boxmodel.renderer.RenderableBox;
 import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class LayoutableBox {
@@ -68,13 +67,13 @@ public class LayoutableBox {
 		return box;
 	}
 
-	public RenderableBox toRenderable() {
+	public RenderableBoxImpl toRenderable() {
 		RenderableBoxImpl renderableBoxImpl = new RenderableBoxImpl(
-				"",
 				absoluteX, absoluteY, width, height,
-				margin, padding, null,
-				visible, RenderType.BOX,
-				foregroundColor);
+				margin, padding, visible);
+
+		renderableBoxImpl.setColor(foregroundColor);
+		renderableBoxImpl.setRenderType(RenderType.BOX);
 		renderableBoxImpl.setBackgroundImage(backgroundImage);
 		return renderableBoxImpl;
 	}
@@ -84,8 +83,6 @@ public class LayoutableBox {
 		if (v < 0) {
 			System.out.println(name + " shrunk!!");
 		}
-		// TODO maybe needs property: mayRise or something
-		// return Math.max(0, v);
 		return v;
 	}
 

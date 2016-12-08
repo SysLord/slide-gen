@@ -61,7 +61,7 @@ public class Renderer {
 	}
 
 	private static void drawLine(Graphics2D graphics, RenderableBox box) {
-		graphics.setColor(box.getForegroundColor());
+		graphics.setColor(box.getColor());
 		// TODO only horizontal supported
 		graphics.setStroke(new BasicStroke(box.getContentHeight()));
 		// horizontal: height = 0
@@ -75,7 +75,7 @@ public class Renderer {
 			return;
 		}
 
-		graphics.setColor(box.getForegroundColor());
+		graphics.setColor(box.getColor());
 
 		AttributedString attributedString = new AttributedString(box.getContent());
 		attributedString.addAttribute(TextAttribute.FONT, box.getFont());

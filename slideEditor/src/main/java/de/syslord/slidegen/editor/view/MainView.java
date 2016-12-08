@@ -16,24 +16,11 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ColorPickerArea;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 
 import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.debug.Lorem;
-import de.syslord.slidegen.editor.base.BaseEditorView;
-import de.syslord.slidegen.editor.base.ContainerBox;
-import de.syslord.slidegen.editor.base.PropertyFieldFactory;
-import de.syslord.slidegen.editor.base.StylableLabel;
-import de.syslord.slidegen.editor.base.UiBox;
+import de.syslord.boxmodel.Lorem;
+import de.syslord.slidegen.editor.base.*;
 import de.syslord.slidegen.editor.glue.EditorExporter;
 import de.syslord.slidegen.editor.model.UiBoxStyleData;
 
@@ -84,8 +71,8 @@ public class MainView extends BaseEditorView<Model> {
 		grid.setSizeUndefined();
 
 		// TODO debug
-		grid.addComponent(new Label(), 0, 0);
-		grid.addComponent(new Label(), 1, 1);
+		// grid.addComponent(new Button("Chrome fix"), 0, 0, 0, 1);
+		// grid.addComponent(new Label(), 1, 1);
 
 		grid.addComponent(
 				createEditor(model.getEditorWidth(), model.getEditorHeight()),
@@ -99,12 +86,12 @@ public class MainView extends BaseEditorView<Model> {
 		// 1, 0);
 		createWindow(
 				"Properties", editorProperties.createProperties(),
-				0, model.getEditorHeight(),
+				0, model.getEditorHeight() - 300,
 				1024, 300);
 		createWindow(
 				"Preview", createPreview(),
 				model.getEditorWidth(), 0,
-				model.getEditorWidth() + 80, model.getEditorHeight() + 200);
+				model.getEditorWidth() + 80, model.getEditorHeight() - 200);
 
 		initEditableLayout();
 

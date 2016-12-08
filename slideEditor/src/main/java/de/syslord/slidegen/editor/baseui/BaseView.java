@@ -1,11 +1,7 @@
 package de.syslord.slidegen.editor.baseui;
 
 import com.vaadin.navigator.View;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 
 public abstract class BaseView<T> extends CustomComponent implements View {
 

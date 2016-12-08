@@ -20,10 +20,11 @@ import de.syslord.slidegen.editor.model.UiBoxStyleData;
 @SpringComponent
 public class EditorExporter {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(EditorExporter.class);
 
 	// TODO creation of root should not be special, reason is mainly that the uiStyleData is not properly
-	// setup.
+	// set up.
 	public LayoutableBox exportLayout(Editor editor, int editorWidth, int editorHeight) {
 		LayoutableBox rootBox = LayoutableBox.createFixedHeightBox("root", 0, 0, editorWidth, editorHeight);
 
@@ -64,9 +65,9 @@ public class EditorExporter {
 	private void exportTextBox(LayoutableBox parentBox, UiBox childToExport) {
 		TextBox box = new TextBox("",
 				childToExport.getValue(),
+				childToExport.getUiStyleData().getFont(),
 				childToExport.getX(), childToExport.getY(),
 				childToExport.getWidth(), childToExport.getHeight());
-		box.setFont(childToExport.getUiStyleData().getFont());
 
 		addUiBoxProperties(childToExport.getUiStyleData(), box);
 		parentBox.addChild(box);

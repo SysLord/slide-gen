@@ -1,11 +1,6 @@
 package de.syslord.boxmodel.layouter;
 
-import de.syslord.boxmodel.HeightProperty;
-import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.LineBox;
-import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.Stretch;
-import de.syslord.boxmodel.TextBox;
+import de.syslord.boxmodel.*;
 import de.syslord.boxmodel.renderer.RenderHelper;
 
 public class Layouter {
@@ -24,13 +19,13 @@ public class Layouter {
 		// find largest child and try to grow parent accordingly
 		updateBoxSizeWithChildrenHeightsBottomUp(null, root);
 
-		// test!!
+		// children can grow with their siblings (stretch)
 		applyStretchChildrenToLargestSibling_TopDown(null, root);
 
 		// crop/hide children that are too large for a parent box
 		updateBoxSizeWithYTopDown(null, root);
 
-		// before exporting to renderer we want absolute xy values
+		// before exporting to renderer we want absolute xy values of the boxes calculated
 		updateBoxAbsoluteXYTopDown(null, root);
 	}
 

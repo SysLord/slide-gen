@@ -1,4 +1,4 @@
-package de.syslord.boxmodel.debug;
+package de.syslord.slidegen.editor.util;
 
 public interface Lorem {
 
