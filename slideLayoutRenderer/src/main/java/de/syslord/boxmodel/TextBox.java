@@ -2,6 +2,7 @@ package de.syslord.boxmodel;
 
 import java.awt.Font;
 
+import de.syslord.boxmodel.renderer.FontProvider;
 import de.syslord.boxmodel.renderer.RenderType;
 import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
@@ -9,7 +10,11 @@ public class TextBox extends LayoutableBox {
 
 	private String content;
 
-	private Font font;
+	private Font font = FontProvider.getDefaultFont();
+
+	private int margin = 0;
+
+	private int padding = 0;
 
 	public TextBox(String name, String content, Font font, int x, int y, int width, int height) {
 		super(name, x, y, width, height);
@@ -25,8 +30,14 @@ public class TextBox extends LayoutableBox {
 		renderableBoxImpl.setContent(content);
 		renderableBoxImpl.setFont(font);
 
-		renderableBoxImpl.setBackgroundImage(backgroundImage);
+		renderableBoxImpl.setMargin(margin);
+		renderableBoxImpl.setPadding(padding);
+
 		return renderableBoxImpl;
+	}
+
+	public int getContentWidth() {
+		return Math.max(0, width - 2 * (margin + padding));
 	}
 
 	public String getContent() {
@@ -35,6 +46,22 @@ public class TextBox extends LayoutableBox {
 
 	public Font getFont() {
 		return font;
+	}
+
+	public int getMargin() {
+		return margin;
+	}
+
+	public void setMargin(int margin) {
+		this.margin = margin;
+	}
+
+	public int getPadding() {
+		return padding;
+	}
+
+	public void setPadding(int padding) {
+		this.padding = padding;
 	}
 
 }

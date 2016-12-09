@@ -7,20 +7,12 @@ import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class LineBox extends LayoutableBox {
 
-	private boolean horizontal;
+	private int thickness;
 
-	public LineBox(String name, int x, int y, int width, int height, Color color, boolean horizontal) {
+	public LineBox(String name, int x, int y, int width, int height, Color color, int thickness) {
 		super(name, x, y, width, height);
 		foregroundColor = color;
-		this.horizontal = horizontal;
-	}
-
-	public static LineBox createHorizontal(String name, int x, int y, int width, int thickness, Color color) {
-		return new LineBox(name, x, y, width, thickness, color, true);
-	}
-
-	public boolean isHorizontal() {
-		return horizontal;
+		this.thickness = thickness;
 	}
 
 	@Override
@@ -28,6 +20,7 @@ public class LineBox extends LayoutableBox {
 		RenderableBoxImpl renderableBoxImpl = super.toRenderable();
 
 		renderableBoxImpl.setRenderType(RenderType.LINE);
+		renderableBoxImpl.setLineThickness(thickness);
 
 		return renderableBoxImpl;
 	}

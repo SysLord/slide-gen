@@ -62,12 +62,11 @@ public class Renderer {
 
 	private static void drawLine(Graphics2D graphics, RenderableBox box) {
 		graphics.setColor(box.getColor());
-		// TODO only horizontal supported
-		graphics.setStroke(new BasicStroke(box.getContentHeight()));
-		// horizontal: height = 0
+		graphics.setStroke(new BasicStroke(box.getLineThickness()));
+
 		graphics.drawLine(box.getContentX(), box.getContentY(),
 				box.getContentX() + box.getContentWidth(),
-				box.getContentY());
+				box.getContentY() + box.getContentHeight());
 	}
 
 	private static void drawText(Graphics2D graphics, RenderableBox box) {
@@ -133,7 +132,7 @@ public class Renderer {
 
 			graphics.setColor(Color.BLACK);
 			String format = String.format("x %d y %d h %d", box.getX(), box.getY(), box.getHeight());
-			graphics.drawString(format, box.getX(), box.getY());
+			graphics.drawString(format, box.getX() + box.getWidth() - 100, box.getY() + 20);
 
 			graphics.setColor(savedColor);
 			graphics.setStroke(savedStroke);

@@ -21,7 +21,7 @@ public class LayoutableBox {
 
 	protected ByteArrayInputStream backgroundImage;
 
-	protected Color foregroundColor;
+	protected Color foregroundColor = Color.BLACK;
 
 	// fix values
 	protected int x = 0;
@@ -31,10 +31,6 @@ public class LayoutableBox {
 	protected int width = 0;
 
 	protected int initialHeight = 0;
-
-	protected int margin = 0;
-
-	protected int padding = 0;
 
 	// calculated values
 	protected int heightNeeded = 0;
@@ -63,39 +59,25 @@ public class LayoutableBox {
 
 	public static LayoutableBox createFixedHeightBox(String name, int x, int y, int width, int height) {
 		LayoutableBox box = new LayoutableBox(name, x, y, width, height);
-		box.setProp(HeightProperty.FIX, height);
+		box.setProp(HeightProperty.MIN, height);
+		box.setProp(HeightProperty.MAX, height);
 		return box;
 	}
 
 	public RenderableBoxImpl toRenderable() {
 		RenderableBoxImpl renderableBoxImpl = new RenderableBoxImpl(
 				absoluteX, absoluteY, width, height,
-				margin, padding, visible);
+				visible);
 
 		renderableBoxImpl.setColor(foregroundColor);
-		renderableBoxImpl.setRenderType(RenderType.BOX);
 		renderableBoxImpl.setBackgroundImage(backgroundImage);
+
+		renderableBoxImpl.setRenderType(RenderType.BOX);
 		return renderableBoxImpl;
 	}
 
 	public int getHeightChanged() {
 		return height - initialHeight;
-	}
-
-	public int getContentX() {
-		return x + margin + padding;
-	}
-
-	public int getContentY() {
-		return y + margin + padding;
-	}
-
-	public int getContentWidth() {
-		return Math.max(0, width - 2 * (margin + padding));
-	}
-
-	public int getContentHeight() {
-		return Math.max(0, height - 2 * (margin + padding));
 	}
 
 	public void setHeightNeeded(int heightNeeded) {
@@ -146,13 +128,9 @@ public class LayoutableBox {
 		return layoutProperties.get(key);
 	}
 
-	public void setSize(int set, boolean allowShrinking) {
+	public void setHeight(int set, boolean allowShrinking) {
 		int newsize = set;
 
-		if (hasProp(HeightProperty.FIX)) {
-			int fix = getProp(HeightProperty.FIX);
-			newsize = fix;
-		}
 		if (hasProp(HeightProperty.MIN)) {
 			int min = getProp(HeightProperty.MIN);
 			if (newsize < min) {
@@ -174,38 +152,14 @@ public class LayoutableBox {
 	public void updateSizeIncludingYLimits(int parentHeight) {
 		int maxPossibleHeight = parentHeight - y;
 
+		// for example lines may have height 0
 		if (maxPossibleHeight < 0) {
 			visible = false;
 		}
 
-		int newsize = height;
-
-		if (hasProp(HeightProperty.FIX)) {
-			if (maxPossibleHeight < height) {
-				// TODO
-				// if (printFixIfCropped) {
-				// __size smaller
-				newsize = maxPossibleHeight;
-				// } else {
-				// __remove completely
-				// visible=false;
-				// }
-			}
-		} else if (hasProp(HeightProperty.MIN)) {
-			if (maxPossibleHeight < height) {
-				// TODO
-				// if (printMinIfCropped) {
-				// __size smaller
-				newsize = maxPossibleHeight;
-				// } else {
-				// __remove completely
-				// visible=false;
-				// }
-			}
-		} else if (maxPossibleHeight < height) {
-			newsize = maxPossibleHeight;
+		if (height > maxPossibleHeight) {
+			height = maxPossibleHeight;
 		}
-		height = newsize;
 	}
 
 	public void setY(int set) {
@@ -243,16 +197,12 @@ public class LayoutableBox {
 		return x;
 	}
 
-	public int getMargin() {
-		return margin;
-	}
-
-	public int getPadding() {
-		return padding;
-	}
-
 	public int getHeightNeeded() {
 		return heightNeeded;
+	}
+
+	public int getInitialHeight() {
+		return initialHeight;
 	}
 
 	public int getHeight() {
@@ -261,14 +211,6 @@ public class LayoutableBox {
 
 	public int getY() {
 		return y;
-	}
-
-	public void setPadding(int padding) {
-		this.padding = padding;
-	}
-
-	public void setMargin(int margin) {
-		this.margin = margin;
 	}
 
 	public int getAbsoluteY() {

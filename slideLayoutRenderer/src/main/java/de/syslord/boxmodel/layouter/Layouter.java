@@ -1,17 +1,24 @@
 package de.syslord.boxmodel.layouter;
 
-import de.syslord.boxmodel.*;
+import de.syslord.boxmodel.LayoutableBox;
+import de.syslord.boxmodel.PositionProperty;
+import de.syslord.boxmodel.Stretch;
+import de.syslord.boxmodel.TextBox;
 import de.syslord.boxmodel.renderer.RenderHelper;
 
 public class Layouter {
 
 	public static void layout(LayoutableBox root) {
 
-		inheritMaxAndFixSizesTopDown(null, root);
+		/// initial ///
+
+		// inheritMaxAndFixSizesTopDown(null, root);
 		calcHeightNeeded(null, root);
 
+		/// dynamic calculations ///
+
 		// collect height wishes
-		updateBoxSizeWithHeightNeededContentBottomUp(null, root);
+		updateBoxHeightWithHeightNeededContentBottomUp(null, root);
 
 		// push floating boxes down when siblings grow (child order important)
 		updateBoxYForEveryBoxChildren(null, root);
@@ -20,7 +27,10 @@ public class Layouter {
 		updateBoxSizeWithChildrenHeightsBottomUp(null, root);
 
 		// children can grow with their siblings (stretch)
+		// stretch will not affect parent growth!
 		applyStretchChildrenToLargestSibling_TopDown(null, root);
+
+		/// final steps ///
 
 		// crop/hide children that are too large for a parent box
 		updateBoxSizeWithYTopDown(null, root);
@@ -60,38 +70,16 @@ public class Layouter {
 
 		if (box instanceof TextBox) {
 			TextBox tbox = (TextBox) box;
-			int heightNeeded = RenderHelper.getHeight(tbox.getFont(), tbox.getContent(), box.getContentWidth());
-			box.setHeightNeeded(heightNeeded + 2 * box.getPadding() + 2 * box.getMargin());
-		} else if (box instanceof LineBox) {
-			LineBox lbox = (LineBox) box;
-			box.setHeightNeeded(lbox.getHeight());
+			int heightNeeded = RenderHelper.getHeight(tbox.getFont(), tbox.getContent(), tbox.getContentWidth());
+			box.setHeightNeeded(heightNeeded + 2 * tbox.getPadding() + 2 * tbox.getMargin());
 		}
+		// else if (box instanceof LineBox) {
+		// LineBox lbox = (LineBox) box;
+		// box.setHeightNeeded(lbox.getHeight());
+		// }
 
 		for (LayoutableBox child : box.getChildren()) {
 			calcHeightNeeded(box, child);
-		}
-	}
-
-	private static void inheritMaxAndFixSizesTopDown(LayoutableBox parent, LayoutableBox box) {
-		// erbe maxsize und fix size von parent box.
-		if (parent != null) {
-			if (parent.hasProp(HeightProperty.FIX)) {
-				int parentFix = parent.getProp(HeightProperty.FIX);
-
-				if (box.hasProp(HeightProperty.MAX)
-						&& box.getProp(HeightProperty.MAX) < parentFix) {
-				} else {
-					box.setProp(HeightProperty.MAX, parent.getProp(HeightProperty.FIX));
-				}
-
-			} else if (parent.hasProp(HeightProperty.MAX)) {
-				box.setProp(HeightProperty.MAX, parent.getProp(HeightProperty.MAX));
-			}
-		}
-
-		// children space requirements
-		for (LayoutableBox b : box.getChildren()) {
-			inheritMaxAndFixSizesTopDown(box, b);
 		}
 	}
 
@@ -109,10 +97,10 @@ public class Layouter {
 
 		for (LayoutableBox child : box.getChildren()) {
 			if (child.hasProp(Stretch.GROW_LARGEST)) {
-				child.setSize(mostGrownChild, false);
-			}
-			if (child.hasProp(Stretch.LARGEST)) {
-				child.setSize(largestChild, false);
+				// child may have shrunk or grown already (because of small content/min size)
+				child.setHeight(child.getHeight() + mostGrownChild, false);
+			} else if (child.hasProp(Stretch.LARGEST)) {
+				child.setHeight(largestChild, false);
 			}
 		}
 		for (LayoutableBox child : box.getChildren()) {
@@ -133,13 +121,13 @@ public class Layouter {
 
 	}
 
-	private static void updateBoxSizeWithHeightNeededContentBottomUp(LayoutableBox parent, LayoutableBox box) {
+	private static void updateBoxHeightWithHeightNeededContentBottomUp(LayoutableBox parent, LayoutableBox box) {
 		for (LayoutableBox b : box.getChildren()) {
-			updateBoxSizeWithHeightNeededContentBottomUp(box, b);
+			updateBoxHeightWithHeightNeededContentBottomUp(box, b);
 		}
 
-		// shrinking allowd
-		box.setSize(box.getHeightNeeded(), true);
+		// shrinking allowed
+		box.setHeight(box.getHeightNeeded(), true);
 	}
 
 	private static void updateBoxSizeWithChildrenHeightsBottomUp(LayoutableBox parent, LayoutableBox box) {
@@ -154,7 +142,7 @@ public class Layouter {
 			.max()
 			.orElse(0);
 
-		box.setSize(largestChildSpaceUsage, false);
+		box.setHeight(largestChildSpaceUsage, false);
 	}
 
 }

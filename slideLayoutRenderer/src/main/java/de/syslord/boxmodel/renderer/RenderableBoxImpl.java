@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 
-//TODO 08.12.2016 needs a proper builder when architecutre relatively stable
+//TODO 08.12.2016 needs a proper builder when architecture relatively stable
 public class RenderableBoxImpl implements RenderableBox {
 
 	private String content = "";
@@ -31,13 +31,13 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	private ByteArrayInputStream backgroundImage;
 
-	public RenderableBoxImpl(int x, int y, int width, int height, int margin, int padding, boolean visible) {
+	private int lineThickness;
+
+	public RenderableBoxImpl(int x, int y, int width, int height, boolean visible) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.margin = margin;
-		this.padding = padding;
 		this.visible = visible;
 	}
 
@@ -139,6 +139,23 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	public void setLineThickness(int lineThickness) {
+		this.lineThickness = lineThickness;
+	}
+
+	@Override
+	public int getLineThickness() {
+		return lineThickness;
+	}
+
+	public void setMargin(int margin) {
+		this.margin = margin;
+	}
+
+	public void setPadding(int padding) {
+		this.padding = padding;
 	}
 
 }

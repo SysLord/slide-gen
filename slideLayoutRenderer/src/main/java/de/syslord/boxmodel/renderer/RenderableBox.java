@@ -41,4 +41,6 @@ public interface RenderableBox {
 
 	ByteArrayInputStream getBackgroundImage();
 
+	int getLineThickness();
+
 }
