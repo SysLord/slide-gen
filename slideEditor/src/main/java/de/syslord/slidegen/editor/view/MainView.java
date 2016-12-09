@@ -19,10 +19,10 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 
 import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.Lorem;
 import de.syslord.slidegen.editor.base.*;
 import de.syslord.slidegen.editor.glue.EditorExporter;
 import de.syslord.slidegen.editor.model.UiBoxStyleData;
+import de.syslord.slidegen.editor.util.Lorem;
 
 @UIScope
 @SpringView(name = MainView.VIEW_NAME)
