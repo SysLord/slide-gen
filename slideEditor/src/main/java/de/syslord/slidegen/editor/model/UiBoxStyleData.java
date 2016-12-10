@@ -1,11 +1,8 @@
 package de.syslord.slidegen.editor.model;
 
-import java.awt.Font;
 import java.io.ByteArrayInputStream;
 
 import com.vaadin.shared.ui.colorpicker.Color;
-
-import de.syslord.boxmodel.renderer.FontProvider;
 
 public class UiBoxStyleData {
 
@@ -16,9 +13,6 @@ public class UiBoxStyleData {
 	private boolean floatUp = false;
 
 	private boolean floatDown = false;
-
-	// TODO story font metadata and generate font only on export
-	private Font font = FontProvider.getDefaultFont();
 
 	private ByteArrayInputStream image = null;
 
@@ -54,14 +48,6 @@ public class UiBoxStyleData {
 
 	public void setFloatDown(boolean floatDown) {
 		this.floatDown = floatDown;
-	}
-
-	public Font getFont() {
-		return font;
-	}
-
-	public void setFont(Font font) {
-		this.font = font;
 	}
 
 	public ByteArrayInputStream getImage() {

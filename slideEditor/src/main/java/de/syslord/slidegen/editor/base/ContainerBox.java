@@ -9,6 +9,7 @@ import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 
+import de.syslord.slidegen.editor.model.UiBoxStyleData;
 import de.syslord.slidegen.editor.util.StreamUtil;
 
 public class ContainerBox extends UiBox {
@@ -16,7 +17,7 @@ public class ContainerBox extends UiBox {
 	private AbsoluteLayout layout;
 
 	public ContainerBox(AbsoluteLayout absoluteLayout) {
-		super(absoluteLayout);
+		super(absoluteLayout, new UiBoxStyleData());
 		this.layout = absoluteLayout;
 	}
 
@@ -40,10 +41,10 @@ public class ContainerBox extends UiBox {
 		StylableLabel label = new StylableLabel(content);
 		label.addStyleName(TEXTBOX_STYLE);
 
-		UiBox textbox = new UiBox(label);
+		UiTextBox textbox = new UiTextBox(label);
 		textbox.setEditor(editor);
 
-		label.updateStyle(textbox.getUiStyleData());
+		label.updateStyle(textbox.getUiTextBoxStyleData());
 
 		addToBox(label, x, y, width, height);
 

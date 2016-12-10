@@ -12,7 +12,7 @@ import com.vaadin.ui.Component;
 import de.syslord.slidegen.editor.model.UiBoxStyleData;
 import de.syslord.slidegen.editor.util.Numbers;
 
-public class UiBox extends UiObject {
+public abstract class UiBox extends UiObject {
 
 	private static final int SAFETY_MARGIN = 2;
 
@@ -22,14 +22,15 @@ public class UiBox extends UiObject {
 
 	protected static final String BOX_STYLE = "editor-box";
 
-	private UiBoxStyleData uiBoxStyleData = new UiBoxStyleData();
+	private UiBoxStyleData uiBoxStyleData;
 
 	private AbstractComponent component;
 
 	protected Editor editor;
 
-	public UiBox(AbstractComponent component) {
+	protected UiBox(AbstractComponent component, UiBoxStyleData uiBoxStyleData) {
 		this.component = component;
+		this.uiBoxStyleData = uiBoxStyleData;
 		component.setData(this);
 	}
 

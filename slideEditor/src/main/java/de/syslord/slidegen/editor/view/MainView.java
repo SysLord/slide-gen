@@ -9,19 +9,32 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Push;
-import com.vaadin.data.Property;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ColorPickerArea;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 
 import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.slidegen.editor.base.*;
+import de.syslord.slidegen.editor.base.BaseEditorView;
+import de.syslord.slidegen.editor.base.ContainerBox;
+import de.syslord.slidegen.editor.base.PropertyFieldFactory;
+import de.syslord.slidegen.editor.base.StylableLabel;
+import de.syslord.slidegen.editor.base.UiBox;
+import de.syslord.slidegen.editor.base.UiTextBox;
 import de.syslord.slidegen.editor.glue.EditorExporter;
 import de.syslord.slidegen.editor.model.UiBoxStyleData;
+import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
 import de.syslord.slidegen.editor.util.Lorem;
 
 @UIScope
@@ -140,27 +153,26 @@ public class MainView extends BaseEditorView<Model> {
 		addMinMaxHeightProps(clickedBox);
 		addDynamicPositioningProps(clickedBox);
 
-		if (clickedBox.componentIsA(Property.class)) {
-			showLabelProps(clickedBox);
-		}
-		if (clickedBox.componentIsA(StylableLabel.class)) {
-			StylableLabel label = clickedBox.getComponentAs();
-			addColorProps(clickedBox, label);
-			addFontProps(clickedBox, label);
+		if (clickedBox.isA(UiTextBox.class)) {
+			UiTextBox textBox = (UiTextBox) clickedBox;
+			StylableLabel label = textBox.getComponentAs();
+
+			showTextValueProps(textBox);
+			addTextColorProps(textBox, label);
+			addFontProps(textBox, label);
+			addMarginPaddingProps(textBox, label);
 		}
 	}
 
-	private void showLabelProps(UiBox clickedBox) {
-		String value = clickedBox.getValue();
-
-		TextField tf = new TextField("Text", value);
+	private void showTextValueProps(UiBox clickedBox) {
+		TextField tf = new TextField("Text", clickedBox.getValue());
 		tf.addValueChangeListener(event -> clickedBox.setValue(tf.getValue()));
 		editorProperties.addProperty(tf);
 	}
 
-	private void addFontProps(UiBox box, StylableLabel label) {
-		// TODO
-		UiBoxStyleData uiBoxData = box.getUiStyleData();
+	private void addFontProps(UiTextBox box, StylableLabel label) {
+		UiTextBoxStyleData uiBoxData = box.getUiTextBoxStyleData();
+
 		int oldSize = uiBoxData.getFont().getSize();
 		boolean oldBold = (uiBoxData.getFont().getStyle() & Font.BOLD) > 0;
 
@@ -188,14 +200,35 @@ public class MainView extends BaseEditorView<Model> {
 		editorProperties.addProperties(size, boldCheck);
 	}
 
-	private void addColorProps(UiBox box, StylableLabel label) {
+	private void addMarginPaddingProps(UiTextBox box, StylableLabel label) {
+		UiTextBoxStyleData textboxStyleData = box.getUiTextBoxStyleData();
 
-		UiBoxStyleData uiBoxStyleData = box.getUiStyleData();
-		ColorPickerArea colorPickerArea = fieldFactory.createColorPickerArea(
-				"Float Up", uiBoxStyleData.getForegroundColor(),
+		TextField margin = fieldFactory.createIntegerField(
+				"Margin", textboxStyleData.getMargin(),
+				0, Math.min(box.getWidth() / 2, box.getHeight() / 2),
 				s -> {
-					uiBoxStyleData.setForegroundColor(s);
-					label.updateStyle(uiBoxStyleData);
+					textboxStyleData.setMargin(s);
+					label.updateStyle(textboxStyleData);
+				});
+
+		TextField padding = fieldFactory.createIntegerField(
+				"Padding", textboxStyleData.getPadding(),
+				0, Math.min(box.getWidth() / 2, box.getHeight() / 2),
+				s -> {
+					textboxStyleData.setPadding(s);
+					label.updateStyle(textboxStyleData);
+				});
+		editorProperties.addProperties(margin, padding);
+	}
+
+	private void addTextColorProps(UiTextBox box, StylableLabel label) {
+		UiTextBoxStyleData textboxStyleData = box.getUiTextBoxStyleData();
+
+		ColorPickerArea colorPickerArea = fieldFactory.createColorPickerArea(
+				"Float Up", textboxStyleData.getForegroundColor(),
+				s -> {
+					textboxStyleData.setForegroundColor(s);
+					label.updateStyle(textboxStyleData);
 				});
 
 		editorProperties.addProperties(colorPickerArea);

@@ -15,7 +15,9 @@ import de.syslord.boxmodel.TextBox;
 import de.syslord.slidegen.editor.base.ContainerBox;
 import de.syslord.slidegen.editor.base.Editor;
 import de.syslord.slidegen.editor.base.UiBox;
+import de.syslord.slidegen.editor.base.UiTextBox;
 import de.syslord.slidegen.editor.model.UiBoxStyleData;
+import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
 
 @SpringComponent
 public class EditorExporter {
@@ -44,8 +46,8 @@ public class EditorExporter {
 				LayoutableBox box = exportContainer(parentBox, containerBox);
 
 				exportLayout(box, containerBox);
-			} else {
-				exportTextBox(parentBox, child);
+			} else if (child.isA(UiTextBox.class)) {
+				exportTextBox(parentBox, (UiTextBox) child);
 			}
 
 		});
@@ -62,14 +64,20 @@ public class EditorExporter {
 		return box;
 	}
 
-	private void exportTextBox(LayoutableBox parentBox, UiBox childToExport) {
+	private void exportTextBox(LayoutableBox parentBox, UiTextBox childToExport) {
+		UiTextBoxStyleData styleData = childToExport.getUiTextBoxStyleData();
+
 		TextBox box = new TextBox("",
 				childToExport.getValue(),
-				childToExport.getUiStyleData().getFont(),
+				styleData.getFont(),
 				childToExport.getX(), childToExport.getY(),
 				childToExport.getWidth(), childToExport.getHeight());
 
-		addUiBoxProperties(childToExport.getUiStyleData(), box);
+		addUiBoxProperties(styleData, box);
+
+		box.setPadding(styleData.getPadding());
+		box.setMargin(styleData.getMargin());
+
 		parentBox.addChild(box);
 	}
 
@@ -83,8 +91,6 @@ public class EditorExporter {
 		box.setBackgroundImage(uiBox.getImage());
 		Color vaadinColor = uiBox.getForegroundColor();
 
-		// java.awt.Color color = new java.awt.Color(vaadinColor.getRed(), vaadinColor.getGreen(),
-		// vaadinColor.getBlue());
 		box.setForegroundColor(new java.awt.Color(vaadinColor.getRGB()));
 	}
 
