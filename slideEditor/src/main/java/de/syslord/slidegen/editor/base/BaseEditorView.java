@@ -26,7 +26,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 	private EditorContextMenu editorContextMenu;
 
-	private UiBox currentlySelectedBox;
+	private UiBox currentlySelectedBox = null;
 
 	protected EditorProperties editorProperties = new EditorProperties(component -> component.setWidth("100px"));
 
@@ -46,12 +46,16 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 			onDeleteBoxClicked(menuInfo.getClickedBox());
 			menuInfo.closeContextMenu();
 		});
-		Button newBoxButton = new Button("neuer Rahmen", btnClick -> {
+		Button newBoxButton = new Button("neuer Container", btnClick -> {
 			onAddBoxClicked(menuInfo);
 			menuInfo.closeContextMenu();
 		});
+		Button newTextBoxButton = new Button("neue TextBox", btnClick -> {
+			onAddTextBoxClicked(menuInfo);
+			menuInfo.closeContextMenu();
+		});
 
-		return new VerticalLayout(deleteBoxButton, newBoxButton);
+		return new VerticalLayout(newTextBoxButton, newBoxButton, deleteBoxButton);
 	}
 
 	protected Component createEditor(int width, int height) {
@@ -128,14 +132,29 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 		ContainerBox container = clickedBox.getContainer();
 		if (clickedBox != container) {
-			push(() -> container.createBox(x - clickedBox.getX(), y - clickedBox.getY(), 40, 40));
+			container.createBox(x - clickedBox.getX(), y - clickedBox.getY(), 40, 40);
 			return;
 		}
-		push(() -> container.createBox(x, y, 40, 40));
+		container.createBox(x, y, 40, 40);
+	}
+
+	private void onAddTextBoxClicked(EditorContextMenu.ContextMenuOpenInfo menuInfo) {
+		UiBox clickedBox = menuInfo.getClickedBox();
+
+		int x = menuInfo.getRelativeX();
+		int y = menuInfo.getRelativeY();
+
+		ContainerBox container = clickedBox.getContainer();
+		if (clickedBox != container) {
+			container.createTextBox("Text", x - clickedBox.getX(), y - clickedBox.getY(), 40, 40);
+			return;
+		}
+		container.createTextBox("Text", x, y, 40, 40);
 	}
 
 	protected void onEditorClicked(LayoutClickEvent event) {
 		Component clickedComponent = event.getClickedComponent();
+
 		boolean nocChildLayoutClicked = clickedComponent == null;
 		UiBox clickedBox = nocChildLayoutClicked ? editor : UiBox.of(clickedComponent);
 
@@ -147,13 +166,15 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		int clientX = event.getClientX();
 		int clientY = event.getClientY();
 
+		// do not use event below, as clickedComponent can be null
+
 		// so we need to subtract all nested box positions to get the relative inside the arbitraryly nested
 		// clickedBox
 
 		int boxRelativeX = editorRelativeX;
 		int boxRelativeY = editorRelativeY;
-
 		UiBox box = clickedBox;
+
 		while (!box.isEditor()) {
 			ContainerBox parent = box.getParent();
 
@@ -163,13 +184,11 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 			box = parent;
 		}
 
-		// do not use event further, as clickedComponent can be null
-
 		if (MouseButton.LEFT.equals(mouseButton)) {
 			select(clickedBox);
 		}
 		if (MouseButton.RIGHT.equals(mouseButton)) {
-			editorContextMenu.showContextMenu(clickedBox, boxRelativeX, boxRelativeY, clientX, clientY);
+			editorContextMenu.showContextMenu(clickedBox, boxRelativeX, boxRelativeY, clientX, clientY, 200, 200);
 		}
 	}
 

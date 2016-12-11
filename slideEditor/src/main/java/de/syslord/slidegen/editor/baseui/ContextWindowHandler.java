@@ -3,6 +3,7 @@ package de.syslord.slidegen.editor.baseui;
 import java.util.UUID;
 
 import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
@@ -27,12 +28,12 @@ public class ContextWindowHandler {
 	// clicklistener might be executed after we left this method and already close the new window. So we keep
 	// Track of our state and allow only to close the currently open window whilst keeping the global
 	// clicklistener count to exectly 1 for this operation.
-	public Window showContextWindow(Component content, int x, int y, String width, String heigth) {
+	public Window showContextWindow(Component content, int x, int y, int width, int heigth) {
 		Window w = new Window();
 		String s = UUID.randomUUID().toString();
 		w.setId(s);
-		w.setWidth(width);
-		w.setHeight(heigth);
+		w.setWidth(width, Unit.PIXELS);
+		w.setHeight(heigth, Unit.PIXELS);
 
 		w.setDraggable(false);
 		w.setModal(false);

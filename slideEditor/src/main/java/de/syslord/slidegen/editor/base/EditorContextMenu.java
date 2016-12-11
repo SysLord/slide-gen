@@ -55,7 +55,8 @@ public class EditorContextMenu {
 		this.contextMenuGenerator = contextMenuGenerator;
 	}
 
-	public void showContextMenu(UiBox clickedBox, int boxRelativeX, int boxRelativeY, int clientX, int clientY) {
+	public void showContextMenu(UiBox clickedBox, int boxRelativeX, int boxRelativeY, int clientX, int clientY, int width,
+			int height) {
 		// open contextMenu
 		ContextMenuOpenInfo contextMenuData = new ContextMenuOpenInfo(
 				clickedBox,
@@ -69,9 +70,7 @@ public class EditorContextMenu {
 				menuContent,
 				clientX + 5,
 				clientY + 5,
-				"200px", "200px");
-
-		// dude! Next time i'm using the vaadin addon...
+				width, height);
 	}
 
 }

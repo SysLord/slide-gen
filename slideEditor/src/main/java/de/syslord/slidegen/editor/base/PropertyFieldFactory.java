@@ -12,7 +12,9 @@ public class PropertyFieldFactory {
 
 	public TextField createIntegerAsStringField(String caption, String content, int minval, int maxVal,
 			Consumer<String> c) {
-		TextField field = new TextField(caption, content);
+		TextField field = new TextField(caption);
+		field.setValue(content);
+
 		field.setConverter(Integer.class);
 		field.setNullSettingAllowed(false);
 		field.addValidator(new IntegerRangeValidator("Position außerhalb des Feldes", minval, maxVal));

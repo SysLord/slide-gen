@@ -48,7 +48,6 @@ public class ContainerBox extends UiBox {
 
 		addToBox(label, x, y, width, height);
 
-		// TODO debugging
 		outline(label);
 		return textbox;
 	}
@@ -62,7 +61,6 @@ public class ContainerBox extends UiBox {
 
 		addToBox(ac, x, y, width, height);
 
-		// TODO debugging
 		outline(ac);
 		return containerBox;
 	}
