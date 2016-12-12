@@ -16,6 +16,8 @@ public class TextBox extends LayoutableBox {
 
 	private int padding = 0;
 
+	private String stylename;
+
 	public TextBox(String name, String content, Font font, int x, int y, int width, int height) {
 		super(name, x, y, width, height);
 		this.content = content;
@@ -64,4 +66,13 @@ public class TextBox extends LayoutableBox {
 		this.padding = padding;
 	}
 
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	@Override
+	public void applyStyle(Style style) {
+		super.applyStyle(style);
+		style.getFont(stylename).ifPresent(f -> font = f);
+	}
 }
