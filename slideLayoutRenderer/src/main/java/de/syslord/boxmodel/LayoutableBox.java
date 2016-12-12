@@ -112,8 +112,14 @@ public class LayoutableBox {
 		}
 	}
 
-	public void addChild(LayoutableBox b) {
-		children.add(b);
+	public void addChild(LayoutableBox child) {
+		children.add(child);
+	}
+
+	public void addChildren(LayoutableBox... newChildren) {
+		for (LayoutableBox child : newChildren) {
+			children.add(child);
+		}
 	}
 
 	public List<LayoutableBox> getChildren() {
