@@ -23,7 +23,7 @@ public class ImageGeneratorTest {
 		nest.setProp(HeightProperty.MIN, 600);
 		nest.setProp(HeightProperty.MAX, 600);
 
-		TextBox t1 = new TextBox("t1", Lorem.Ips, font, 0, 0, 100, 30);
+		TextBox t1 = new TextBox("t1", Lorem.Ips, 0, 0, 100, 30);
 		t1.setPadding(20);
 		t1.setProp(HeightProperty.MIN, 30);
 		t1.setProp(HeightProperty.MAX, 100);

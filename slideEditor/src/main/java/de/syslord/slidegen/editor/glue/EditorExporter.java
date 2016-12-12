@@ -69,10 +69,10 @@ public class EditorExporter {
 
 		TextBox box = new TextBox("",
 				childToExport.getValue(),
-				styleData.getFont(),
 				childToExport.getX(), childToExport.getY(),
 				childToExport.getWidth(), childToExport.getHeight());
 
+		box.setFont(styleData.getFont());
 		addUiBoxProperties(styleData, box);
 
 		box.setPadding(styleData.getPadding());

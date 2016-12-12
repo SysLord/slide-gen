@@ -1,18 +1,10 @@
 package de.syslord.boxmodel.layouter;
 
-import static org.junit.Assert.assertEquals;
-
-import java.awt.Font;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import de.syslord.boxmodel.HeightProperty;
-import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.Lorem;
-import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.Stretch;
-import de.syslord.boxmodel.TextBox;
-import de.syslord.boxmodel.renderer.FontProvider;
+import de.syslord.boxmodel.*;
 
 public class LayouterTest {
 
@@ -21,8 +13,6 @@ public class LayouterTest {
 	private static final String EMPTY = "";
 
 	private static final String LONG_TEXT = Lorem.longIpsum;
-
-	private Font font = FontProvider.getDefaultFont();
 
 	@Test
 	public void testLayout_BoxWithMinSizeWillBeMinSize() throws Exception {
@@ -181,11 +171,11 @@ public class LayouterTest {
 	}
 
 	private TextBox createTextWithHeight(int height, String con) {
-		return new TextBox("", con, font, 50, 50, 500, height);
+		return new TextBox("", con, 50, 50, 500, height);
 	}
 
 	private TextBox createTextWithHeightAndY(int height, int y, String con) {
-		return new TextBox("", con, font, 50, y, 500, height);
+		return new TextBox("", con, 50, y, 500, height);
 	}
 
 	private LayoutableBox[] createWith2Children_HeightYContent(int height1, int y1, String content1, int height2, int y2,
