@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface Style {
 
-	Optional<Font> getFont(String stylename);
+	Optional<Font> getFont(String styleIdentifier);
 
-	Optional<Color> getColor(String stylename);
+	Optional<Color> getColor(String styleIdentifier);
 
 }

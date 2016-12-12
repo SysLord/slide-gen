@@ -45,7 +45,7 @@ public class LayoutableBox {
 
 	protected boolean visible = true;
 
-	protected String stylename;
+	protected String styleIdentifier = "";
 
 	//
 
@@ -79,9 +79,9 @@ public class LayoutableBox {
 	}
 
 	public void applyStyle(Style style) {
+		style.getColor(styleIdentifier).ifPresent(c -> foregroundColor = c);
 
-		style.getColor(stylename).ifPresent(c -> foregroundColor = c);
-
+		children.stream().forEach(child -> child.applyStyle(style));
 	}
 
 	public int getHeightChanged() {
@@ -261,6 +261,10 @@ public class LayoutableBox {
 
 	public Color getForegroundColor() {
 		return foregroundColor;
+	}
+
+	public void setStyleName(String styleIdentifier) {
+		this.styleIdentifier = styleIdentifier;
 	}
 
 }
