@@ -267,4 +267,9 @@ public class LayoutableBox {
 		this.styleIdentifier = styleIdentifier;
 	}
 
+	public void setFloat() {
+		setProp(PositionProperty.FLOAT_UP);
+		setProp(PositionProperty.FLOAT_DOWN);
+	}
+
 }
