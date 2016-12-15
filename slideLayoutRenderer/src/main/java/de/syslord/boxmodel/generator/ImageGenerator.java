@@ -2,7 +2,6 @@ package de.syslord.boxmodel.generator;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.layouter.Layouter;
@@ -15,13 +14,9 @@ public class ImageGenerator {
 
 		Layouter.layout(root);
 
-		List<RenderableBox> collect = root
-			.streamFlat()
-			.map(layout -> layout.toRenderable())
-			.filter(r -> r.isVisible())
-			.collect(Collectors.toList());
+		List<RenderableBox> renderable = root.exportToRenderable();
 
-		BufferedImage render = Renderer.render(root.getWidth(), root.getHeight(), collect);
+		BufferedImage render = Renderer.render(root.getWidth(), root.getHeight(), renderable);
 
 		return render;
 	}

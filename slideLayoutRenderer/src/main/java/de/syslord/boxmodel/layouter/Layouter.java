@@ -1,9 +1,6 @@
 package de.syslord.boxmodel.layouter;
 
-import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.Stretch;
-import de.syslord.boxmodel.TextBox;
+import de.syslord.boxmodel.*;
 import de.syslord.boxmodel.renderer.RenderHelper;
 
 public class Layouter {
@@ -72,7 +69,10 @@ public class Layouter {
 			TextBox tbox = (TextBox) box;
 			int heightNeeded = RenderHelper.getHeight(tbox.getFont(), tbox.getContent(), tbox.getContentWidth());
 			int spaceNeeded = tbox.getMargin().getVerticalSpaceNeeded() + tbox.getPadding().getVerticalSpaceNeeded();
+
 			box.setHeightNeeded(heightNeeded + spaceNeeded);
+		} else if (box instanceof LineBox) {
+			box.setHeightNeeded(box.getInitialHeight());
 		}
 
 		for (LayoutableBox child : box.getChildren()) {

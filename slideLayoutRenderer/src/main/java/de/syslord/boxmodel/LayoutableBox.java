@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.syslord.boxmodel.renderer.RenderType;
+import de.syslord.boxmodel.renderer.RenderableBox;
 import de.syslord.boxmodel.renderer.RenderableBoxImpl;
 
 public class LayoutableBox {
@@ -32,20 +34,22 @@ public class LayoutableBox {
 
 	protected int initialHeight = 0;
 
+	protected int priority = 0;
+
+	protected String styleIdentifier = "";
+
 	// calculated values
-	protected int heightNeeded = 0;
+	protected int heightNeeded;
 
-	protected int height = 0;
+	protected int height;
 
-	protected int y = 0;
+	protected int y;
 
-	protected int absoluteY = 0;
+	protected int absoluteY;
 
 	protected int absoluteX;
 
-	protected boolean visible = true;
-
-	protected String styleIdentifier = "";
+	protected boolean visible;
 
 	//
 
@@ -57,6 +61,8 @@ public class LayoutableBox {
 		this.width = width;
 		this.height = height;
 		this.initialHeight = height;
+
+		resetCalculatedValues();
 	}
 
 	public static LayoutableBox createFixedHeightBox(String name, int x, int y, int width, int height) {
@@ -64,6 +70,27 @@ public class LayoutableBox {
 		box.setProp(HeightProperty.MIN, height);
 		box.setProp(HeightProperty.MAX, height);
 		return box;
+	}
+
+	public void resetAllCalculatedValues() {
+		streamFlat().forEach(box -> box.resetCalculatedValues());
+	}
+
+	private void resetCalculatedValues() {
+		height = initialHeight;
+		y = initialY;
+		heightNeeded = 0;
+		absoluteY = 0;
+		absoluteX = 0;
+		visible = true;
+	}
+
+	public List<RenderableBox> exportToRenderable() {
+		List<RenderableBox> collect = streamFlat()
+			.map(layout -> layout.toRenderable())
+			.filter(r -> r.isVisible())
+			.collect(Collectors.toList());
+		return collect;
 	}
 
 	public RenderableBoxImpl toRenderable() {
@@ -76,6 +103,10 @@ public class LayoutableBox {
 
 		renderableBoxImpl.setRenderType(RenderType.BOX);
 		return renderableBoxImpl;
+	}
+
+	public boolean isCropped() {
+		return heightNeeded > 0 && height < heightNeeded;
 	}
 
 	public void applyStyle(Style style) {
@@ -114,6 +145,10 @@ public class LayoutableBox {
 
 	public void addChild(LayoutableBox child) {
 		children.add(child);
+	}
+
+	public void removeChild(LayoutableBox child) {
+		children.remove(child);
 	}
 
 	public void addChildren(LayoutableBox... newChildren) {
@@ -166,8 +201,8 @@ public class LayoutableBox {
 	public void updateSizeIncludingYLimits(int parentHeight) {
 		int maxPossibleHeight = parentHeight - y;
 
-		// for example lines may have height 0
-		if (maxPossibleHeight < 0) {
+		// lines may have height 0 so maxPossibleHeight 0 is not a problem
+		if (y > parentHeight || maxPossibleHeight < 0) {
 			visible = false;
 		}
 
@@ -195,6 +230,25 @@ public class LayoutableBox {
 			Stream<LayoutableBox> reduce = getChildren().stream()
 				.map(child -> child.streamFlat())
 				.reduce(Stream.of(this), (s1, s2) -> Stream.concat(s1, s2));
+			return reduce;
+		}
+	}
+
+	public Stream<ParentChild> streamFlatWithParents() {
+		// root is never a leaf
+		if (getChildren().isEmpty()) {
+			return Stream.empty();
+		}
+		return streamFlatWithParents(this);
+	}
+
+	protected Stream<ParentChild> streamFlatWithParents(LayoutableBox parent) {
+		if (getChildren().isEmpty()) {
+			return Stream.of(new ParentChild(parent, this));
+		} else {
+			Stream<ParentChild> reduce = getChildren().stream()
+				.map(child -> child.streamFlatWithParents(this))
+				.reduce(Stream.of(new ParentChild(parent, this)), (s1, s2) -> Stream.concat(s1, s2));
 			return reduce;
 		}
 	}
@@ -270,6 +324,23 @@ public class LayoutableBox {
 	public void setFloat() {
 		setProp(PositionProperty.FLOAT_UP);
 		setProp(PositionProperty.FLOAT_DOWN);
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	@Override
+	public String toString() {
+		return "LayoutableBox [name=" + name + ", backgroundImage=" + backgroundImage + ", foregroundColor=" + foregroundColor
+				+ ", x=" + x + ", initialY=" + initialY + ", width=" + width + ", initialHeight=" + initialHeight + ", priority="
+				+ priority + ", styleIdentifier=" + styleIdentifier + ", heightNeeded=" + heightNeeded + ", height=" + height
+				+ ", y=" + y + ", absoluteY=" + absoluteY + ", absoluteX=" + absoluteX + ", visible=" + visible
+				+ ", layoutProperties=" + layoutProperties + ", children=" + children + "]";
 	}
 
 }
