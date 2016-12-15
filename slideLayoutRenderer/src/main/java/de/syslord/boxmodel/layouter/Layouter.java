@@ -71,12 +71,9 @@ public class Layouter {
 		if (box instanceof TextBox) {
 			TextBox tbox = (TextBox) box;
 			int heightNeeded = RenderHelper.getHeight(tbox.getFont(), tbox.getContent(), tbox.getContentWidth());
-			box.setHeightNeeded(heightNeeded + 2 * tbox.getPadding() + 2 * tbox.getMargin());
+			int spaceNeeded = tbox.getMargin().getVerticalSpaceNeeded() + tbox.getPadding().getVerticalSpaceNeeded();
+			box.setHeightNeeded(heightNeeded + spaceNeeded);
 		}
-		// else if (box instanceof LineBox) {
-		// LineBox lbox = (LineBox) box;
-		// box.setHeightNeeded(lbox.getHeight());
-		// }
 
 		for (LayoutableBox child : box.getChildren()) {
 			calcHeightNeeded(box, child);

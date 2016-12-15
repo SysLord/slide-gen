@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.spring.annotation.SpringComponent;
 
-import de.syslord.boxmodel.HeightProperty;
-import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.boxmodel.PositionProperty;
-import de.syslord.boxmodel.TextBox;
+import de.syslord.boxmodel.*;
 import de.syslord.slidegen.editor.base.ContainerBox;
 import de.syslord.slidegen.editor.base.Editor;
 import de.syslord.slidegen.editor.base.UiBox;
@@ -75,8 +72,9 @@ public class EditorExporter {
 		box.setFont(styleData.getFont());
 		addUiBoxProperties(styleData, box);
 
-		box.setPadding(styleData.getPadding());
-		box.setMargin(styleData.getMargin());
+		// TODO editor can't do all paddings and margins yet
+		box.setPadding(Padding.create(styleData.getPadding(), styleData.getPadding()));
+		box.setMargin(Margin.create(styleData.getMargin(), styleData.getMargin()));
 
 		parentBox.addChild(box);
 	}

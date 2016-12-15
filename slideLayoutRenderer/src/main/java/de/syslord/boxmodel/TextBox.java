@@ -12,9 +12,9 @@ public class TextBox extends LayoutableBox {
 
 	private Font font = FontProvider.getDefaultFont();
 
-	private int margin = 0;
+	private Margin margin = Margin.noMargin();
 
-	private int padding = 0;
+	private Padding padding = Padding.noPadding();
 
 	public TextBox(String name, String content, int x, int y, int width, int height) {
 		super(name, x, y, width, height);
@@ -36,7 +36,8 @@ public class TextBox extends LayoutableBox {
 	}
 
 	public int getContentWidth() {
-		return Math.max(0, width - 2 * (margin + padding));
+		int spaceNeeded = margin.getHorizontalSpaceNeeded() + padding.getHorizontalSpaceNeeded();
+		return Math.max(0, width - spaceNeeded);
 	}
 
 	public String getContent() {
@@ -45,22 +46,6 @@ public class TextBox extends LayoutableBox {
 
 	public Font getFont() {
 		return font;
-	}
-
-	public int getMargin() {
-		return margin;
-	}
-
-	public void setMargin(int margin) {
-		this.margin = margin;
-	}
-
-	public int getPadding() {
-		return padding;
-	}
-
-	public void setPadding(int padding) {
-		this.padding = padding;
 	}
 
 	public void setContent(String content) {
@@ -75,6 +60,22 @@ public class TextBox extends LayoutableBox {
 
 	public void setFont(Font font) {
 		this.font = font;
+	}
+
+	public Margin getMargin() {
+		return margin;
+	}
+
+	public Padding getPadding() {
+		return padding;
+	}
+
+	public void setMargin(Margin margin) {
+		this.margin = margin;
+	}
+
+	public void setPadding(Padding padding) {
+		this.padding = padding;
 	}
 
 }

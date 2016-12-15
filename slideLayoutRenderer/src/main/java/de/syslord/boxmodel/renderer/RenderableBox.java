@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 
+import de.syslord.boxmodel.Margin;
+import de.syslord.boxmodel.Padding;
+
 public interface RenderableBox {
 
 	String getContent();
@@ -16,9 +19,9 @@ public interface RenderableBox {
 
 	int getHeight();
 
-	int getMargin();
+	Margin getMargin();
 
-	int getPadding();
+	Padding getPadding();
 
 	// contains padding and margin
 	int getContentX();

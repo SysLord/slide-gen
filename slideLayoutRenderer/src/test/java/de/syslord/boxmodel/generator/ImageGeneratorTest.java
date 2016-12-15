@@ -1,17 +1,13 @@
 package de.syslord.boxmodel.generator;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
 import de.syslord.boxmodel.*;
-import de.syslord.boxmodel.renderer.FontProvider;
 
 public class ImageGeneratorTest {
-
-	private Font font = FontProvider.getDefaultFont();
 
 	@Test
 	public void testName() throws Exception {
@@ -24,7 +20,6 @@ public class ImageGeneratorTest {
 		nest.setProp(HeightProperty.MAX, 600);
 
 		TextBox t1 = new TextBox("t1", Lorem.Ips, 0, 0, 100, 30);
-		t1.setPadding(20);
 		t1.setProp(HeightProperty.MIN, 30);
 		t1.setProp(HeightProperty.MAX, 100);
 

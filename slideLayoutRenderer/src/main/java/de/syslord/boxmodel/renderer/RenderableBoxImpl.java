@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 
+import de.syslord.boxmodel.Margin;
+import de.syslord.boxmodel.Padding;
+
 //TODO 08.12.2016 needs a proper builder when architecture relatively stable
 public class RenderableBoxImpl implements RenderableBox {
 
@@ -23,9 +26,9 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	private int height;
 
-	private int margin;
+	private Margin margin = Margin.noMargin();
 
-	private int padding;
+	private Padding padding = Padding.noPadding();
 
 	private boolean visible;
 
@@ -51,22 +54,24 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	@Override
 	public int getContentX() {
-		return x + margin + padding;
+		return x + margin.getLeft() + padding.getLeft();
 	}
 
 	@Override
 	public int getContentY() {
-		return y + margin + padding;
+		return y + margin.getTop() + padding.getTop();
 	}
 
 	@Override
 	public int getContentWidth() {
-		return Math.max(0, width - 2 * (margin + padding));
+		int spaceNeeded = margin.getHorizontalSpaceNeeded() + padding.getHorizontalSpaceNeeded();
+		return Math.max(0, width - spaceNeeded);
 	}
 
 	@Override
 	public int getContentHeight() {
-		return Math.max(0, height - 2 * (margin + padding));
+		int spaceNeeded = margin.getVerticalSpaceNeeded() + padding.getVerticalSpaceNeeded();
+		return Math.max(0, height - spaceNeeded);
 	}
 
 	@Override
@@ -95,12 +100,12 @@ public class RenderableBoxImpl implements RenderableBox {
 	}
 
 	@Override
-	public int getMargin() {
+	public Margin getMargin() {
 		return margin;
 	}
 
 	@Override
-	public int getPadding() {
+	public Padding getPadding() {
 		return padding;
 	}
 
@@ -150,11 +155,11 @@ public class RenderableBoxImpl implements RenderableBox {
 		return lineThickness;
 	}
 
-	public void setMargin(int margin) {
+	public void setMargin(Margin margin) {
 		this.margin = margin;
 	}
 
-	public void setPadding(int padding) {
+	public void setPadding(Padding padding) {
 		this.padding = padding;
 	}
 
