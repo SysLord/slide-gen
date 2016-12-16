@@ -29,6 +29,9 @@ public class Renderer {
 
 		for (RenderableBox box : boxes) {
 			drawDebugBorders(graphics, box);
+			if (!box.isVisible()) {
+				continue;
+			}
 
 			if (box.getBackgroundImage() != null) {
 				drawBackgroundImage(graphics, box);
