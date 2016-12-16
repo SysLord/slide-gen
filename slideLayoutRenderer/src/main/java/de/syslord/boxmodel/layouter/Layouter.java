@@ -6,10 +6,10 @@ import de.syslord.boxmodel.renderer.RenderHelper;
 public class Layouter {
 
 	public static void layout(LayoutableBox root) {
+		root.resetAllCalculatedValues();
 
 		/// initial ///
 
-		// inheritMaxAndFixSizesTopDown(null, root);
 		calcHeightNeeded(null, root);
 
 		/// dynamic calculations ///

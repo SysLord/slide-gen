@@ -77,11 +77,14 @@ public class LayoutableBox {
 	}
 
 	private void resetCalculatedValues() {
+		// note: properties are not reset, as the current layouter does not change them
 		height = initialHeight;
 		y = initialY;
+
 		heightNeeded = 0;
 		absoluteY = 0;
 		absoluteX = 0;
+
 		visible = true;
 	}
 
@@ -230,6 +233,24 @@ public class LayoutableBox {
 			Stream<LayoutableBox> reduce = getChildren().stream()
 				.map(child -> child.streamFlat())
 				.reduce(Stream.of(this), (s1, s2) -> Stream.concat(s1, s2));
+			return reduce;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends LayoutableBox> Stream<T> streamFlat(Class<T> clazz) {
+		if (getChildren().isEmpty()) {
+			if (clazz.isAssignableFrom(getClass())) {
+				return Stream.of((T) this);
+			} else {
+				return Stream.empty();
+			}
+		} else {
+			Stream<T> reduce = getChildren().stream()
+				.map(child -> child.streamFlat())
+				.reduce(Stream.of(this), (s1, s2) -> Stream.concat(s1, s2))
+				.filter(box -> clazz.isAssignableFrom(box.getClass()))
+				.map(box -> (T) box);
 			return reduce;
 		}
 	}
