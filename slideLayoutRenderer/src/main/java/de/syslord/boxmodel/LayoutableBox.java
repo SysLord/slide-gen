@@ -181,12 +181,12 @@ public class LayoutableBox {
 	}
 
 	public void setHeight(int set, boolean allowShrinking) {
-		int newsize = set;
+		int newsize = Math.max(0, set);
 
 		if (hasProp(HeightProperty.MIN)) {
 			int min = getProp(HeightProperty.MIN);
 			if (newsize < min) {
-				newsize = min;
+				newsize = Math.max(min, 0);
 			}
 		}
 		if (hasProp(HeightProperty.MAX)) {
@@ -210,7 +210,7 @@ public class LayoutableBox {
 		}
 
 		if (height > maxPossibleHeight) {
-			height = maxPossibleHeight;
+			height = Math.max(0, maxPossibleHeight);
 		}
 	}
 
