@@ -24,13 +24,17 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 	protected Editor editor;
 
+	protected VerticalLayout editorWrapper;
+
 	private EditorContextMenu editorContextMenu;
 
 	private UiBox currentlySelectedBox = null;
 
 	protected EditorProperties editorProperties = new EditorProperties(component -> component.setWidth("100px"));
 
-	protected abstract void onEditableComponentClicked(UiBox clickedBox);
+	protected abstract void onEditableComponentSelect(UiBox clickedBox);
+
+	protected abstract void onEditableComponentUnselect();
 
 	@Override
 	protected void initView() {
@@ -58,7 +62,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		return new VerticalLayout(newTextBoxButton, newBoxButton, deleteBoxButton);
 	}
 
-	protected Component createEditor(int width, int height) {
+	protected void initializeEditor(int width, int height) {
 
 		AbsoluteLayout editorLayout = new AbsoluteLayout();
 		editorLayout.setWidth(width + "px");
@@ -70,11 +74,10 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		editor.setBackdropImage("slide_backdrop.png");
 		initArrowKeyListeners();
 
-		VerticalLayout editorWrapper = new VerticalLayout(editorLayout);
+		editorWrapper = new VerticalLayout(editorLayout);
 		editorWrapper.addStyleName(EDITOR_WRAPPER_STYLE);
 		editorWrapper.setSpacing(false);
 		editorWrapper.setMargin(false);
-		return editorWrapper;
 	}
 
 	// TODO does not update the shown properties. But should do it.
@@ -82,11 +85,15 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		Consumer<Key> moveLeftRight = key -> {
 			if (currentlySelectedBox != null) {
 				currentlySelectedBox.setX(Key.ARROW_RIGHT.equals(key) ? 20 : -20, true);
+
+				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
 		Consumer<Key> moveUpDown = key -> {
 			if (currentlySelectedBox != null) {
 				currentlySelectedBox.setY(Key.ARROW_DOWN.equals(key) ? 20 : -20, true);
+
+				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
 
@@ -99,12 +106,16 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 			if (currentlySelectedBox != null) {
 				int oldWidth = currentlySelectedBox.getWidth();
 				currentlySelectedBox.setWidth(Key.ARROW_RIGHT.equals(key) ? oldWidth + 20 : oldWidth - 20);
+
+				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
 		Consumer<Key> changeHeight = key -> {
 			if (currentlySelectedBox != null) {
 				int oldHeight = currentlySelectedBox.getHeight();
 				currentlySelectedBox.setHeight(Key.ARROW_DOWN.equals(key) ? oldHeight + 20 : oldHeight - 20);
+
+				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
 
@@ -196,11 +207,12 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		editor.clearSelection();
 		editorProperties.clear();
 		currentlySelectedBox = null;
+		onEditableComponentUnselect();
 
 		if (!clickedBox.isEditor()) {
 			currentlySelectedBox = clickedBox;
 			clickedBox.select();
-			onEditableComponentClicked(clickedBox);
+			onEditableComponentSelect(clickedBox);
 		}
 	}
 

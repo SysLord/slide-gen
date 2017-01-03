@@ -8,11 +8,13 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ColorPickerArea;
 import com.vaadin.ui.TextField;
 
+import de.syslord.slidegen.editor.baseui.CustomTextField;
+
 public class PropertyFieldFactory {
 
 	public TextField createIntegerAsStringField(String caption, String content, int minval, int maxVal,
 			Consumer<String> c) {
-		TextField field = new TextField(caption);
+		TextField field = new CustomTextField(caption);
 		field.setValue(content);
 
 		field.setConverter(Integer.class);
@@ -37,7 +39,7 @@ public class PropertyFieldFactory {
 	}
 
 	public TextField createIntegerField(String caption, Integer content, int minval, int maxVal, Consumer<Integer> c) {
-		TextField field = new TextField(caption);
+		TextField field = new CustomTextField(caption);
 		field.setConverter(Integer.class);
 		field.setNullSettingAllowed(false);
 		field.addValidator(new IntegerRangeValidator("Position außerhalb des Feldes", minval, maxVal));

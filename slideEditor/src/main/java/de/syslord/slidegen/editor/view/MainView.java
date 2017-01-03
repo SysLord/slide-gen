@@ -3,6 +3,7 @@ package de.syslord.slidegen.editor.view;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 
@@ -27,6 +28,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.slidegen.editor.base.BaseEditorView;
+import de.syslord.slidegen.editor.base.BoxPropertyChangedEvent;
 import de.syslord.slidegen.editor.base.ContainerBox;
 import de.syslord.slidegen.editor.base.PropertyFieldFactory;
 import de.syslord.slidegen.editor.base.StylableLabel;
@@ -56,6 +58,8 @@ public class MainView extends BaseEditorView<Model> {
 
 	private VerticalLayout previewImageHolder;
 
+	private Consumer<BoxPropertyChangedEvent> boxPropertyChangedListener = event -> editorProperties.reReadValues();
+
 	@PostConstruct
 	protected void createUI() {
 		presenter.setView(this);
@@ -83,9 +87,9 @@ public class MainView extends BaseEditorView<Model> {
 		grid.setSpacing(true);
 		grid.setSizeUndefined();
 
-		grid.addComponent(
-				createEditor(model.getEditorWidth(), model.getEditorHeight()),
-				0, 0);
+		initializeEditor(model.getEditorWidth(), model.getEditorHeight());
+
+		grid.addComponent(editorWrapper, 0, 0);
 		// TODO introduce options to show Properties or preview as window or in page
 		// grid.addComponent(
 		// createProperties(),
@@ -147,7 +151,12 @@ public class MainView extends BaseEditorView<Model> {
 	}
 
 	@Override
-	protected void onEditableComponentClicked(UiBox clickedBox) {
+	protected void onEditableComponentUnselect() {
+		eventBus.unregister(this, BoxPropertyChangedEvent.class, boxPropertyChangedListener);
+	}
+
+	@Override
+	protected void onEditableComponentSelect(UiBox clickedBox) {
 		addPositioningProps(clickedBox);
 		addResizableProps(clickedBox);
 		addMinMaxHeightProps(clickedBox);
@@ -162,6 +171,8 @@ public class MainView extends BaseEditorView<Model> {
 			addFontProps(textBox, label);
 			addMarginPaddingProps(textBox, label);
 		}
+
+		eventBus.register(this, BoxPropertyChangedEvent.class, boxPropertyChangedListener);
 	}
 
 	private void showTextValueProps(UiBox clickedBox) {
@@ -275,6 +286,9 @@ public class MainView extends BaseEditorView<Model> {
 				v -> box.setHeight(v));
 
 		editorProperties.addProperties(0, widthField, heightField);
+
+		editorProperties.setValueProvider(widthField, () -> box.getWidth());
+		editorProperties.setValueProvider(heightField, () -> box.getHeight());
 	}
 
 	private void addPositioningProps(UiBox box) {
@@ -288,6 +302,9 @@ public class MainView extends BaseEditorView<Model> {
 				0, model.getEditorHeight(),
 				v -> box.setY(v, false));
 		editorProperties.addProperties(0, xField, yField);
+
+		editorProperties.setValueProvider(xField, () -> box.getX());
+		editorProperties.setValueProvider(yField, () -> box.getY());
 	}
 
 	public void showPreview(ByteArrayOutputStream out) {
