@@ -5,12 +5,18 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
-import de.syslord.boxmodel.*;
+import de.syslord.boxmodel.HeightProperty;
+import de.syslord.boxmodel.LayoutableBox;
+import de.syslord.boxmodel.LineBox;
+import de.syslord.boxmodel.Lorem;
+import de.syslord.boxmodel.ManualDebuggingImageDisplayer;
+import de.syslord.boxmodel.PositionProperty;
+import de.syslord.boxmodel.TextBox;
 
 public class ImageGeneratorTest {
 
 	@Test
-	public void testName() throws Exception {
+	public void manuallyTestRenderImage_NoTestAssertYet_NeedsManualInspection() throws Exception {
 		LayoutableBox root = new LayoutableBox("root", 0, 0, 1000, 700);
 		root.setProp(HeightProperty.MIN, 700);
 		root.setProp(HeightProperty.MAX, 700);

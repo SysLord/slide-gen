@@ -77,7 +77,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		return editorWrapper;
 	}
 
-	// TODO does not updat the shown properties. But should do it.
+	// TODO does not update the shown properties. But should do it.
 	public void initArrowKeyListeners() {
 		Consumer<Key> moveLeftRight = key -> {
 			if (currentlySelectedBox != null) {

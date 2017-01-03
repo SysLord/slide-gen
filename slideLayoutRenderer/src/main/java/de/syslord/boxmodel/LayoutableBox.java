@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableList;
+
 import de.syslord.boxmodel.renderer.RenderType;
 import de.syslord.boxmodel.renderer.RenderableBox;
 import de.syslord.boxmodel.renderer.RenderableBoxImpl;
@@ -161,7 +163,7 @@ public class LayoutableBox {
 	}
 
 	public List<LayoutableBox> getChildren() {
-		return children;
+		return ImmutableList.copyOf(children);
 	}
 
 	public boolean hasChildren() {
@@ -256,22 +258,13 @@ public class LayoutableBox {
 	}
 
 	public Stream<ParentChild> streamFlatWithParents() {
-		// root is never a leaf
-		if (getChildren().isEmpty()) {
-			return Stream.empty();
-		}
-		return streamFlatWithParents(this);
-	}
+		Stream<ParentChild> identity = getChildren().stream()
+			.map(child -> new ParentChild(this, child));
 
-	protected Stream<ParentChild> streamFlatWithParents(LayoutableBox parent) {
-		if (getChildren().isEmpty()) {
-			return Stream.of(new ParentChild(parent, this));
-		} else {
-			Stream<ParentChild> reduce = getChildren().stream()
-				.map(child -> child.streamFlatWithParents(this))
-				.reduce(Stream.of(new ParentChild(parent, this)), (s1, s2) -> Stream.concat(s1, s2));
-			return reduce;
-		}
+		Stream<ParentChild> reduce = getChildren().stream()
+			.map(child -> child.streamFlatWithParents())
+			.reduce(identity, (s1, s2) -> Stream.concat(s1, s2));
+		return reduce;
 	}
 
 	public int getWidth() {
