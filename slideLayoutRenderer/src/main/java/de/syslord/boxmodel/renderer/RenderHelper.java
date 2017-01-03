@@ -1,7 +1,6 @@
 package de.syslord.boxmodel.renderer;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
@@ -15,32 +14,6 @@ import java.text.AttributedString;
 public class RenderHelper {
 
 	private static final BufferedImage IMG = createImage(1, 1);
-
-	public static int getHeightALT(Font font, String content, int width) {
-		if (content == null || content.isEmpty()) {
-			return 0;
-		}
-
-		Graphics2D graphics = getGraphics(IMG);
-
-		AttributedString text = new AttributedString(content);
-		FontMetrics fontMetrics = graphics.getFontMetrics(font);
-		FontRenderContext fontRenderContext = graphics.getFontRenderContext();
-
-		AttributedCharacterIterator styledText = text.getIterator();
-		LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, fontRenderContext);
-
-		int fontHeight = fontMetrics.getAscent() + fontMetrics.getLeading() + fontMetrics.getDescent();
-		int lines = 0;
-
-		while (measurer.getPosition() < styledText.getEndIndex()) {
-			measurer.nextLayout(width);
-			lines++;
-		}
-
-		int heightNeeded = lines * fontHeight;
-		return heightNeeded;
-	}
 
 	public static int getHeight(Font font, String content, int width) {
 		if (content == null || content.isEmpty()) {
