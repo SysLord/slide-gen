@@ -30,8 +30,6 @@ public class ContainerBox extends UiBox {
 		layout.removeStyleName(SELECTED_STYLE);
 
 		getChildren().stream()
-			// .filter(box -> box.isA(ContainerBox.class))
-			// .map(box -> (ContainerBox) box)
 			.forEach(box -> {
 				box.clearSelection();
 			});
@@ -65,7 +63,10 @@ public class ContainerBox extends UiBox {
 		return containerBox;
 	}
 
-	// TODO works on component rather than uibox?
+	public void removeAllBoxes() {
+		layout.removeAllComponents();
+	}
+
 	private void addToBox(Component component, float x, float y, int width, int height) {
 		layout.addComponent(component);
 

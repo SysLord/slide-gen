@@ -59,6 +59,10 @@ public abstract class UiBox extends UiObject {
 		return uiBoxStyleData;
 	}
 
+	/*
+	 * Using isEditor() in most of the getters is not very object oriented but it makes the special handling
+	 * obvious in this class.
+	 */
 	public boolean isEditor() {
 		return false;
 	}
@@ -83,10 +87,16 @@ public abstract class UiBox extends UiObject {
 	}
 
 	public int getX() {
+		if (isEditor()) {
+			return 0;
+		}
 		return getParent().getLayout().getPosition(component).getLeftValue().intValue();
 	}
 
 	public int getY() {
+		if (isEditor()) {
+			return 0;
+		}
 		return getParent().getLayout().getPosition(component).getTopValue().intValue();
 	}
 
@@ -99,6 +109,12 @@ public abstract class UiBox extends UiObject {
 	}
 
 	public void setWidth(int width) {
+		if (isEditor()) {
+			// no constraint for editor
+			component.setWidth(width, Unit.PIXELS);
+			return;
+		}
+
 		int safeWidth = Math.max(2, width);
 
 		int space = getParent().getWidth() - getX();
@@ -112,6 +128,12 @@ public abstract class UiBox extends UiObject {
 	}
 
 	public void setHeight(int height) {
+		if (isEditor()) {
+			// no constraint for editor
+			component.setHeight(height, Unit.PIXELS);
+			return;
+		}
+
 		int safeHeight = Math.max(2, height);
 
 		int space = getParent().getHeight() - getY();
@@ -143,8 +165,6 @@ public abstract class UiBox extends UiObject {
 			ContainerBox parent = getParent();
 			AbsoluteLayout containerLayout = parent.getLayout();
 
-			// should not need push as long as this is a ui thread
-			// push(() -> containerLayout.removeComponent(component));
 			containerLayout.removeComponent(component);
 		}
 	}

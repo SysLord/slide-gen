@@ -3,6 +3,7 @@ package de.syslord.boxmodel;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,6 +147,10 @@ public class LayoutableBox {
 		if (doSet) {
 			layoutProperties.put(property, null);
 		}
+	}
+
+	public Map<Object, Integer> getProperties() {
+		return Collections.unmodifiableMap(layoutProperties);
 	}
 
 	public void addChild(LayoutableBox child) {

@@ -23,6 +23,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -35,8 +36,10 @@ import de.syslord.slidegen.editor.base.StylableLabel;
 import de.syslord.slidegen.editor.base.UiBox;
 import de.syslord.slidegen.editor.base.UiTextBox;
 import de.syslord.slidegen.editor.glue.EditorExporter;
+import de.syslord.slidegen.editor.glue.EditorJavaCodeImporter;
 import de.syslord.slidegen.editor.model.UiBoxStyleData;
 import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
+import de.syslord.slidegen.editor.persisting.JavaCodeExporter;
 import de.syslord.slidegen.editor.util.Lorem;
 
 @UIScope
@@ -59,6 +62,8 @@ public class MainView extends BaseEditorView<Model> {
 	private VerticalLayout previewImageHolder;
 
 	private Consumer<BoxPropertyChangedEvent> boxPropertyChangedListener = event -> editorProperties.reReadValues();
+
+	private TextArea javaCodeImportExportField;
 
 	@PostConstruct
 	protected void createUI() {
@@ -90,6 +95,7 @@ public class MainView extends BaseEditorView<Model> {
 		initializeEditor(model.getEditorWidth(), model.getEditorHeight());
 
 		grid.addComponent(editorWrapper, 0, 0);
+		grid.addComponent(createJavaImporterExporter(), 0, 1);
 		// TODO introduce options to show Properties or preview as window or in page
 		// grid.addComponent(
 		// createProperties(),
@@ -115,6 +121,35 @@ public class MainView extends BaseEditorView<Model> {
 		setCompositionRoot(scrollPanel);
 	}
 
+	private Component createJavaImporterExporter() {
+		VerticalLayout layout = new VerticalLayout();
+
+		javaCodeImportExportField = new TextArea();
+		layout.addComponent(javaCodeImportExportField);
+
+		Button javaCodeExportButton = new Button("Export", event -> exportToJavaCode());
+		Button javaCodeImportButton = new Button("Import/Run", event -> importFromJavaCode(javaCodeImportExportField.getValue()));
+		layout.addComponent(javaCodeExportButton);
+		layout.addComponent(javaCodeImportButton);
+
+		return layout;
+	}
+
+	private void exportToJavaCode() {
+		LayoutableBox root = exportLayout();
+
+		String export = new JavaCodeExporter().export(root, "ExportedLayout", "exportedlayout");
+
+		javaCodeImportExportField.setValue(export);
+	}
+
+	private void importFromJavaCode(String javaCode) {
+		clearSelection();
+		clearEditor();
+
+		new EditorJavaCodeImporter().importFromCode(editor, javaCode);
+	}
+
 	private Component createPreview() {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth("100%");
@@ -132,8 +167,12 @@ public class MainView extends BaseEditorView<Model> {
 	}
 
 	private void pushrender() {
-		LayoutableBox exportLayout = editorExporter.exportLayout(editor, model.getEditorWidth(), model.getEditorHeight());
+		LayoutableBox exportLayout = exportLayout();
 		presenter.renderPreviewAndPush(exportLayout);
+	}
+
+	private LayoutableBox exportLayout() {
+		return editorExporter.exportLayout(editor, model.getEditorWidth(), model.getEditorHeight());
 	}
 
 	// TODO Load from boxmodel

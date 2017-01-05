@@ -203,17 +203,25 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		}
 	}
 
-	public void select(UiBox clickedBox) {
-		editor.clearSelection();
-		editorProperties.clear();
-		currentlySelectedBox = null;
-		onEditableComponentUnselect();
+	protected void select(UiBox clickedBox) {
+		clearSelection();
 
 		if (!clickedBox.isEditor()) {
 			currentlySelectedBox = clickedBox;
 			clickedBox.select();
 			onEditableComponentSelect(clickedBox);
 		}
+	}
+
+	protected void clearSelection() {
+		editor.clearSelection();
+		editorProperties.clear();
+		currentlySelectedBox = null;
+		onEditableComponentUnselect();
+	}
+
+	protected void clearEditor() {
+		editor.removeAllBoxes();
 	}
 
 }

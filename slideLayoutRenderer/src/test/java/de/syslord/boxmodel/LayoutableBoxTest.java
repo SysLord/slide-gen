@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.util.stream.Collectors;
 
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,7 +75,8 @@ public class LayoutableBoxTest {
 		ParentChild pc2 = new ParentChild(nest, t1);
 		ParentChild pc3 = new ParentChild(nest, line);
 
-		assertThat(root.streamFlatWithParents().collect(Collectors.toList()), containsInAnyOrder(pc1, pc2, pc3));
+		assertThat(root.streamFlatWithParents().collect(Collectors.toList()),
+				IsIterableContainingInOrder.contains(pc1, pc2, pc3));
 	}
 
 	@Test
