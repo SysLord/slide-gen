@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.editor;
 
 import java.util.function.Consumer;
 
@@ -7,14 +7,24 @@ import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 
-import de.syslord.slidegen.editor.baseui.BaseView;
-import de.syslord.slidegen.editor.util.Key;
+import de.syslord.slidegen.editor.ui.base.BaseView;
+import de.syslord.slidegen.editor.ui.elements.ContainerBox;
+import de.syslord.slidegen.editor.ui.elements.UiBox;
+import de.syslord.slidegen.editor.util.KeyboardKey;
 import de.syslord.slidegen.editor.util.ModifierKey;
 import de.syslord.slidegen.editor.util.UiUtil;
 
 public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> {
+
+	private static final int ARROW_KEYS_RASTER = 20;
+
+	private static final int NEW_BOX_HEIGHT = 40;
+
+	private static final int NEW_BOX_WIDTH = 100;
 
 	private static final String EDITOR_STYLE = "editor";
 
@@ -24,13 +34,13 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 	protected Editor editor;
 
-	protected VerticalLayout editorWrapper;
+	protected GridLayout editorWrapper;
 
 	private EditorContextMenu editorContextMenu;
 
 	private UiBox currentlySelectedBox = null;
 
-	protected EditorProperties editorProperties = new EditorProperties(component -> component.setWidth("100px"));
+	protected EditorProperties editorProperties = new EditorProperties(component -> stylePropertyComponents(component));
 
 	protected abstract void onEditableComponentSelect(UiBox clickedBox);
 
@@ -41,6 +51,14 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		super.initView();
 
 		editorContextMenu = new EditorContextMenu(menuInfo -> createEditorContextMenu(menuInfo));
+	}
+
+	private void stylePropertyComponents(Component component) {
+		if (TextArea.class.isAssignableFrom(component.getClass())) {
+			component.setWidth("200px");
+		} else {
+			component.setWidth("100px");
+		}
 	}
 
 	private Component createEditorContextMenu(EditorContextMenu.ContextMenuOpenInfo menuInfo) {
@@ -69,51 +87,66 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		editorLayout.setHeight(height + "px");
 		editorLayout.addStyleName(EDITOR_STYLE);
 
-		editor = new Editor(editorLayout);
+		editor = new Editor(editorLayout, createTreeListener());
 		editor.getLayout().addLayoutClickListener(event -> onEditorClicked(event));
 		editor.setBackdropImage("slide_backdrop.png");
 		initArrowKeyListeners();
 
-		editorWrapper = new VerticalLayout(editorLayout);
+		// This needs to be a grid to correctly wrap the absolute layout without collapsing.
+		editorWrapper = new GridLayout(1, 1, editorLayout);
 		editorWrapper.addStyleName(EDITOR_WRAPPER_STYLE);
 		editorWrapper.setSpacing(false);
 		editorWrapper.setMargin(false);
+
+		editor.getEditorTree().addTreeClickAction(box -> select(box));
 	}
 
-	// TODO does not update the shown properties. But should do it.
+	private TreeListener<UiBox, ContainerBox> createTreeListener() {
+		return new TreeListener<UiBox, ContainerBox>() {
+
+			@Override
+			public void setNewParent(UiBox child, ContainerBox newParent) {
+				if (child.getParent() != newParent) {
+					child.move(newParent);
+				}
+			}
+
+		};
+	}
+
 	public void initArrowKeyListeners() {
-		Consumer<Key> moveLeftRight = key -> {
+		Consumer<KeyboardKey> moveLeftRight = key -> {
 			if (currentlySelectedBox != null) {
-				currentlySelectedBox.setX(Key.ARROW_RIGHT.equals(key) ? 20 : -20, true);
+				currentlySelectedBox.setX(KeyboardKey.ARROW_RIGHT.equals(key) ? 20 : -20, true);
 
 				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
-		Consumer<Key> moveUpDown = key -> {
+		Consumer<KeyboardKey> moveUpDown = key -> {
 			if (currentlySelectedBox != null) {
-				currentlySelectedBox.setY(Key.ARROW_DOWN.equals(key) ? 20 : -20, true);
+				currentlySelectedBox.setY(KeyboardKey.ARROW_DOWN.equals(key) ? 20 : -20, true);
 
 				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
 
-		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_right", Key.ARROW_RIGHT, moveLeftRight));
-		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_left", Key.ARROW_LEFT, moveLeftRight));
-		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_down", Key.ARROW_DOWN, moveUpDown));
-		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_up", Key.ARROW_UP, moveUpDown));
+		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_right", KeyboardKey.ARROW_RIGHT, moveLeftRight));
+		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_left", KeyboardKey.ARROW_LEFT, moveLeftRight));
+		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_down", KeyboardKey.ARROW_DOWN, moveUpDown));
+		editor.getLayout().addShortcutListener(UiUtil.createShortCut("arrow_up", KeyboardKey.ARROW_UP, moveUpDown));
 
-		Consumer<Key> changeWidth = key -> {
+		Consumer<KeyboardKey> changeWidth = key -> {
 			if (currentlySelectedBox != null) {
 				int oldWidth = currentlySelectedBox.getWidth();
-				currentlySelectedBox.setWidth(Key.ARROW_RIGHT.equals(key) ? oldWidth + 20 : oldWidth - 20);
+				currentlySelectedBox.setWidth(KeyboardKey.ARROW_RIGHT.equals(key) ? oldWidth + ARROW_KEYS_RASTER : oldWidth - 20);
 
 				eventBus.fire(new BoxPropertyChangedEvent());
 			}
 		};
-		Consumer<Key> changeHeight = key -> {
+		Consumer<KeyboardKey> changeHeight = key -> {
 			if (currentlySelectedBox != null) {
 				int oldHeight = currentlySelectedBox.getHeight();
-				currentlySelectedBox.setHeight(Key.ARROW_DOWN.equals(key) ? oldHeight + 20 : oldHeight - 20);
+				currentlySelectedBox.setHeight(KeyboardKey.ARROW_DOWN.equals(key) ? oldHeight + 20 : oldHeight - 20);
 
 				eventBus.fire(new BoxPropertyChangedEvent());
 			}
@@ -121,13 +154,13 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 		ModifierKey ctrl = ModifierKey.CTRL;
 		editor.getLayout().addShortcutListener(
-				UiUtil.createShortCut("arrow_right", Key.ARROW_RIGHT, changeWidth, ctrl));
+				UiUtil.createShortCut("arrow_right", KeyboardKey.ARROW_RIGHT, changeWidth, ctrl));
 		editor.getLayout().addShortcutListener(
-				UiUtil.createShortCut("arrow_left", Key.ARROW_LEFT, changeWidth, ctrl));
+				UiUtil.createShortCut("arrow_left", KeyboardKey.ARROW_LEFT, changeWidth, ctrl));
 		editor.getLayout().addShortcutListener(
-				UiUtil.createShortCut("arrow_down", Key.ARROW_DOWN, changeHeight, ctrl));
+				UiUtil.createShortCut("arrow_down", KeyboardKey.ARROW_DOWN, changeHeight, ctrl));
 		editor.getLayout().addShortcutListener(
-				UiUtil.createShortCut("arrow_up", Key.ARROW_UP, changeHeight, ctrl));
+				UiUtil.createShortCut("arrow_up", KeyboardKey.ARROW_UP, changeHeight, ctrl));
 	}
 
 	private void onDeleteBoxClicked(UiBox clicked) {
@@ -143,10 +176,13 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 		ContainerBox container = clickedBox.getContainer();
 		if (clickedBox != container) {
-			container.createBox(x - clickedBox.getX(), y - clickedBox.getY(), 40, 40);
+			ContainerBox newBox = container.createBox(x + clickedBox.getX(), y + clickedBox.getY(), NEW_BOX_WIDTH,
+					NEW_BOX_HEIGHT);
+			select(newBox);
 			return;
 		}
-		container.createBox(x, y, 40, 40);
+		ContainerBox newBox = container.createBox(x, y, NEW_BOX_WIDTH, NEW_BOX_HEIGHT);
+		select(newBox);
 	}
 
 	private void onAddTextBoxClicked(EditorContextMenu.ContextMenuOpenInfo menuInfo) {
@@ -157,10 +193,13 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 
 		ContainerBox container = clickedBox.getContainer();
 		if (clickedBox != container) {
-			container.createTextBox("Text", x - clickedBox.getX(), y - clickedBox.getY(), 40, 40);
+			UiBox newBox = container.createTextBox("Text", x + clickedBox.getX(), y + clickedBox.getY(), NEW_BOX_WIDTH,
+					NEW_BOX_HEIGHT);
+			select(newBox);
 			return;
 		}
-		container.createTextBox("Text", x, y, 40, 40);
+		UiBox newBox = container.createTextBox("Text", x, y, NEW_BOX_WIDTH, NEW_BOX_HEIGHT);
+		select(newBox);
 	}
 
 	protected void onEditorClicked(LayoutClickEvent event) {
@@ -212,6 +251,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 		if (!clickedBox.isEditor()) {
 			currentlySelectedBox = clickedBox;
 			clickedBox.select();
+			editor.getEditorTree().selectTreeItem(clickedBox);
 			onEditableComponentSelect(clickedBox);
 		}
 	}

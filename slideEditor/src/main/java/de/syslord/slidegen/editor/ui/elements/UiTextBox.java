@@ -1,8 +1,6 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.elements;
 
 import com.vaadin.ui.AbstractComponent;
-
-import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
 
 public class UiTextBox extends UiBox {
 
@@ -12,6 +10,11 @@ public class UiTextBox extends UiBox {
 
 	public UiTextBoxStyleData getUiTextBoxStyleData() {
 		return (UiTextBoxStyleData) super.getUiStyleData();
+	}
+
+	@Override
+	public String getTreeCaption() {
+		return "Text: " + getValue();
 	}
 
 }

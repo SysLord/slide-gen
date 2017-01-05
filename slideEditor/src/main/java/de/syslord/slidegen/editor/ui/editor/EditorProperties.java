@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.editor;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -14,7 +14,7 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import de.syslord.slidegen.editor.baseui.CustomTextField;
+import de.syslord.slidegen.editor.ui.base.CustomTextField;
 
 public class EditorProperties {
 
@@ -94,7 +94,7 @@ public class EditorProperties {
 					});
 
 		} else {
-			// fallback
+			// fallback that will trigger the fields valuechanged event.
 			valueUpdaters.put(field,
 					() -> field.setConvertedValue(supplier.get()));
 		}

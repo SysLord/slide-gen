@@ -1,10 +1,11 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.editor;
 
 import java.util.function.Function;
 
 import com.vaadin.ui.Component;
 
-import de.syslord.slidegen.editor.baseui.ContextWindowHandler;
+import de.syslord.slidegen.editor.ui.base.ContextWindowHandler;
+import de.syslord.slidegen.editor.ui.elements.UiBox;
 
 public class EditorContextMenu {
 
@@ -65,7 +66,6 @@ public class EditorContextMenu {
 
 		Component menuContent = contextMenuGenerator.apply(contextMenuData);
 
-		// TODO externalize values
 		contextWindowHandler.showContextWindow(
 				menuContent,
 				clientX + 5,

@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.editor;
 
 import java.io.ByteArrayInputStream;
 
@@ -8,13 +8,29 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Image;
 
+import de.syslord.slidegen.editor.ui.elements.ContainerBox;
+import de.syslord.slidegen.editor.ui.elements.UiBox;
 import de.syslord.slidegen.editor.util.ResourceUtil;
 
+/*
+ * Editor should not be a ContainerBox but contain one. Editor and ContainerBox should implement the
+ * same interface 'Container' or something. Editor should be an observer of all Containers to
+ * observe changes and act upon them. For example updating the tree.
+ */
 public class Editor extends ContainerBox {
 
-	public Editor(AbsoluteLayout absoluteLayout) {
+	private EditorTree editorTree;
+
+	public Editor(AbsoluteLayout absoluteLayout, TreeListener<UiBox, ContainerBox> treeListener) {
 		super(absoluteLayout);
 		editor = this;
+
+		editorTree = new EditorTree(treeListener);
+		editorTree.addTreeItem(this);
+	}
+
+	public EditorTree getEditorTree() {
+		return editorTree;
 	}
 
 	@Override

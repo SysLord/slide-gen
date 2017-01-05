@@ -23,26 +23,29 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
 import de.syslord.boxmodel.LayoutableBox;
-import de.syslord.slidegen.editor.base.BaseEditorView;
-import de.syslord.slidegen.editor.base.BoxPropertyChangedEvent;
-import de.syslord.slidegen.editor.base.ContainerBox;
-import de.syslord.slidegen.editor.base.PropertyFieldFactory;
-import de.syslord.slidegen.editor.base.StylableLabel;
-import de.syslord.slidegen.editor.base.UiBox;
-import de.syslord.slidegen.editor.base.UiTextBox;
 import de.syslord.slidegen.editor.glue.EditorExporter;
-import de.syslord.slidegen.editor.model.UiBoxStyleData;
-import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
+import de.syslord.slidegen.editor.ui.editor.BaseEditorView;
+import de.syslord.slidegen.editor.ui.editor.BoxPropertyChangedEvent;
+import de.syslord.slidegen.editor.ui.editor.StylableLabel;
+import de.syslord.slidegen.editor.ui.elements.ContainerBox;
+import de.syslord.slidegen.editor.ui.elements.UiBox;
+import de.syslord.slidegen.editor.ui.elements.UiBoxStyleData;
+import de.syslord.slidegen.editor.ui.elements.UiTextBox;
+import de.syslord.slidegen.editor.ui.elements.UiTextBoxStyleData;
 import de.syslord.slidegen.editor.util.Lorem;
 
 @UIScope
 @SpringView(name = MainView.VIEW_NAME)
 @Push
 public class MainView extends BaseEditorView<Model> {
+
+	private static final int TREE_WIDTH = 350;
 
 	private static final long serialVersionUID = -55365966110272137L;
 
@@ -85,34 +88,45 @@ public class MainView extends BaseEditorView<Model> {
 		GridLayout grid = new GridLayout(4, 10);
 		grid.setMargin(true);
 		grid.setSpacing(true);
-		grid.setSizeUndefined();
+		grid.setHeightUndefined();
+		grid.setWidth("100%");
 
 		initializeEditor(model.getEditorWidth(), model.getEditorHeight());
 
 		grid.addComponent(editorWrapper, 0, 0);
-		// TODO introduce options to show Properties or preview as window or in page
-		// grid.addComponent(
-		// createProperties(),
-		// 0, 1);
-		// grid.addComponent(
-		// createPreview(),
-		// 1, 0);
-		createWindow(
-				"Properties", editorProperties.createProperties(),
-				0, model.getEditorHeight() - 300,
-				1024, 300);
-		createWindow(
-				"Preview", createPreview(),
-				model.getEditorWidth(), 0,
-				model.getEditorWidth() + 80, model.getEditorHeight() - 200);
+		grid.addComponent(createTreeWrapper(), 1, 0);
 
-		initEditableLayout();
+		grid.setColumnExpandRatio(0, 0);
+		grid.setColumnExpandRatio(1, 0);
+		grid.setColumnExpandRatio(2, 1);
 
 		Panel scrollPanel = new Panel(grid);
 		scrollPanel.setSizeFull();
 
 		setSizeFull();
 		setCompositionRoot(scrollPanel);
+
+		createWindow(
+				"Properties", editorProperties.createProperties(),
+				50, model.getEditorHeight(),
+				1024, 300);
+		createWindow(
+				"Preview", createPreview(),
+				model.getEditorWidth(), 200,
+				model.getEditorWidth() + 80, model.getEditorHeight() - 200);
+
+		initEditableLayout();
+	}
+
+	private Panel createTreeWrapper() {
+		Tree treeComponent = editor.getEditorTree().getTreeComponent();
+		treeComponent.setWidth(TREE_WIDTH - 10, Unit.PIXELS);
+		treeComponent.setHeightUndefined();
+
+		Panel treeScrollPanel = new Panel(treeComponent);
+		treeScrollPanel.setWidth(TREE_WIDTH, Unit.PIXELS);
+		treeScrollPanel.setHeight("100%");
+		return treeScrollPanel;
 	}
 
 	private Component createPreview() {
@@ -136,18 +150,22 @@ public class MainView extends BaseEditorView<Model> {
 		presenter.renderPreviewAndPush(exportLayout);
 	}
 
-	// TODO Load from boxmodel
 	private void initEditableLayout() {
 		editor.createTextBox(Lorem.ASDASD, 0, 0, 100, 25);
+		editor.setName("Editor");
 
 		UiBox fl = editor.createTextBox("Floater", 0, 40, 200, 200);
 		fl.getUiStyleData().setFloatUp(true);
 		fl.getUiStyleData().setFloatDown(true);
+		fl.setName("Floater");
 
-		editor.createTextBox("B", 150, 100, 200, 200);
+		UiBox b = editor.createTextBox("B", 150, 100, 200, 200);
+		b.setName("Textbox B");
 
 		ContainerBox nest = editor.createBox(600, 400, 200, 200);
-		nest.createTextBox("X", 10, 10, 20, 20);
+		nest.setName("NEST");
+		UiBox x = nest.createTextBox("X", 10, 10, 20, 20);
+		x.setName("Text X");
 	}
 
 	@Override
@@ -176,9 +194,14 @@ public class MainView extends BaseEditorView<Model> {
 	}
 
 	private void showTextValueProps(UiBox clickedBox) {
-		TextField tf = new TextField("Text", clickedBox.getValue());
-		tf.addValueChangeListener(event -> clickedBox.setValue(tf.getValue()));
-		editorProperties.addProperty(tf);
+		TextArea ta = new TextArea("Text", clickedBox.getValue());
+		ta.setHeight("100%");
+		ta.setTextChangeTimeout(200);
+
+		ta.addTextChangeListener(event -> clickedBox.setValue(event.getText()));
+		ta.addValueChangeListener(event -> clickedBox.setValue(ta.getValue()));
+
+		editorProperties.addProperty(ta);
 	}
 
 	private void addFontProps(UiTextBox box, StylableLabel label) {

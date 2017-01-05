@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.elements;
 
 import com.vaadin.ui.UI;
 

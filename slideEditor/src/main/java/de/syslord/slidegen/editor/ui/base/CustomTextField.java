@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.baseui;
+package de.syslord.slidegen.editor.ui.base;
 
 import com.vaadin.ui.TextField;
 

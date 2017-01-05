@@ -1,7 +1,7 @@
 package de.syslord.slidegen.editor.util;
 
 // Vaadin could have used an enum already...
-public enum Key {
+public enum KeyboardKey {
 
 	ARROW_LEFT(37),
 	ARROW_UP(38),
@@ -10,7 +10,7 @@ public enum Key {
 
 	private int code;
 
-	private Key(int code) {
+	private KeyboardKey(int code) {
 		this.code = code;
 	}
 

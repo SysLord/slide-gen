@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.editor;
 
 import java.awt.Font;
 
@@ -6,7 +6,7 @@ import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 
-import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
+import de.syslord.slidegen.editor.ui.elements.UiTextBoxStyleData;
 
 public class StylableLabel extends Label {
 
@@ -46,7 +46,7 @@ public class StylableLabel extends Label {
 
 	private String getStyledText() {
 		if (foregroundColor == null || font == null) {
-			return text;
+			return getHtmlText();
 		}
 
 		String f = String.format(
@@ -65,8 +65,16 @@ public class StylableLabel extends Label {
 				(font.getStyle() & Font.BOLD) > 0 ? "bold" : "normal",
 				margin,
 				padding,
-				text);
+				getHtmlText());
 		return f;
+	}
+
+	private String getHtmlText() {
+		return toHtmlLineBreaks(text);
+	}
+
+	private String toHtmlLineBreaks(String string) {
+		return string.replace("\n", "<br>");
 	}
 
 	public String getText() {

@@ -59,11 +59,11 @@ public class UiUtil {
 	// return null;
 	// }
 
-	public static ShortcutListener createShortCut(String caption, Key key, Consumer<Key> action) {
+	public static ShortcutListener createShortCut(String caption, KeyboardKey key, Consumer<KeyboardKey> action) {
 		return createShortcut(caption, key, action, new int[] {});
 	}
 
-	private static ShortcutListener createShortcut(String caption, Key key, Consumer<Key> action, int[] modifiers) {
+	private static ShortcutListener createShortcut(String caption, KeyboardKey key, Consumer<KeyboardKey> action, int[] modifiers) {
 		ShortcutListener shortcut = new ShortcutListener(caption, key.getCode(), modifiers) {
 
 			private static final long serialVersionUID = -2630182663706626973L;
@@ -77,7 +77,7 @@ public class UiUtil {
 		return shortcut;
 	}
 
-	public static ShortcutListener createShortCut(String caption, Key key, Consumer<Key> action, ModifierKey... modifiers) {
+	public static ShortcutListener createShortCut(String caption, KeyboardKey key, Consumer<KeyboardKey> action, ModifierKey... modifiers) {
 		int[] intModifiers = Stream.of(modifiers)
 			.mapToInt(m -> m.getCode())
 			.toArray();
