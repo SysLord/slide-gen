@@ -122,6 +122,12 @@ $v-layout-margin-left: 6px;
   
   .properties-window {
   	@include window;
+  	
+  	/* hide maximize buttons */
+    .v-window-maximizebox {
+  	  display:none;  
+    }
   }
+  
   
 }

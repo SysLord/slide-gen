@@ -13000,3 +13000,7 @@ div.v-layout.v-horizontal.v-widget {
 .slideedit .properties-window .v-window-contents, .slideedit .properties-window .v-window-contents .v-panel {
 	background-color: #EEEEEE;
 }
+
+.slideedit .properties-window .v-window-maximizebox {
+	display: none;
+}
