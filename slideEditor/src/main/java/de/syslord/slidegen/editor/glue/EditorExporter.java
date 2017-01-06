@@ -8,13 +8,18 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.spring.annotation.SpringComponent;
 
-import de.syslord.boxmodel.*;
-import de.syslord.slidegen.editor.base.ContainerBox;
-import de.syslord.slidegen.editor.base.Editor;
-import de.syslord.slidegen.editor.base.UiBox;
-import de.syslord.slidegen.editor.base.UiTextBox;
-import de.syslord.slidegen.editor.model.UiBoxStyleData;
-import de.syslord.slidegen.editor.model.UiTextBoxStyleData;
+import de.syslord.boxmodel.HeightProperty;
+import de.syslord.boxmodel.LayoutableBox;
+import de.syslord.boxmodel.Margin;
+import de.syslord.boxmodel.Padding;
+import de.syslord.boxmodel.PositionProperty;
+import de.syslord.boxmodel.TextBox;
+import de.syslord.slidegen.editor.ui.editor.Editor;
+import de.syslord.slidegen.editor.ui.elements.ContainerBox;
+import de.syslord.slidegen.editor.ui.elements.UiBox;
+import de.syslord.slidegen.editor.ui.elements.UiBoxStyleData;
+import de.syslord.slidegen.editor.ui.elements.UiTextBox;
+import de.syslord.slidegen.editor.ui.elements.UiTextBoxStyleData;
 
 @SpringComponent
 public class EditorExporter {
@@ -35,7 +40,7 @@ public class EditorExporter {
 
 	private void exportLayout(LayoutableBox parentBox, ContainerBox container) {
 
-		List<UiBox> children = container.getChildren();
+		List<UiBox> children = container.getChildrenOrdered();
 
 		children.forEach(child -> {
 			if (child.isA(ContainerBox.class)) {

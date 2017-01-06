@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.view;
 
 import java.util.function.Consumer;
 
@@ -8,7 +8,7 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ColorPickerArea;
 import com.vaadin.ui.TextField;
 
-import de.syslord.slidegen.editor.baseui.CustomTextField;
+import de.syslord.slidegen.editor.ui.base.CustomTextField;
 
 public class PropertyFieldFactory {
 

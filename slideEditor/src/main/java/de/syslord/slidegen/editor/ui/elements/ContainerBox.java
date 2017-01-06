@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.elements;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,7 +9,7 @@ import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 
-import de.syslord.slidegen.editor.model.UiBoxStyleData;
+import de.syslord.slidegen.editor.ui.editor.StylableLabel;
 import de.syslord.slidegen.editor.util.StreamUtil;
 
 public class ContainerBox extends UiBox {
@@ -23,6 +23,11 @@ public class ContainerBox extends UiBox {
 
 	public AbsoluteLayout getLayout() {
 		return layout;
+	}
+
+	@Override
+	public String getTreeCaption() {
+		return "Container";
 	}
 
 	@Override
@@ -44,7 +49,7 @@ public class ContainerBox extends UiBox {
 
 		label.updateStyle(textbox.getUiTextBoxStyleData());
 
-		addToBox(label, x, y, width, height);
+		addToBox(textbox, x, y, width, height);
 
 		outline(label);
 		return textbox;
@@ -57,7 +62,7 @@ public class ContainerBox extends UiBox {
 		ContainerBox containerBox = new ContainerBox(ac);
 		containerBox.setEditor(editor);
 
-		addToBox(ac, x, y, width, height);
+		addToBox(containerBox, x, y, width, height);
 
 		outline(ac);
 		return containerBox;
@@ -67,7 +72,19 @@ public class ContainerBox extends UiBox {
 		layout.removeAllComponents();
 	}
 
-	private void addToBox(Component component, float x, float y, int width, int height) {
+	public void moveInsert(UiBox uiBox, int x, int y) {
+		addToLayout(uiBox, x, y, uiBox.getWidth(), uiBox.getHeight());
+	}
+
+	private void addToBox(UiBox uiBox, float x, float y, int width, int height) {
+		addToLayout(uiBox, x, y, width, height);
+
+		editor.getEditorTree().addTreeItem(uiBox, this);
+	}
+
+	private void addToLayout(UiBox uiBox, float x, float y, int width, int height) {
+		Component component = uiBox.getComponent();
+
 		layout.addComponent(component);
 
 		ComponentPosition pos = layout.new ComponentPosition();
@@ -86,6 +103,10 @@ public class ContainerBox extends UiBox {
 			.filter(o -> o.isPresent())
 			.map(o -> o.get())
 			.collect(Collectors.toList());
+	}
+
+	public List<UiBox> getChildrenOrdered() {
+		return editor.getEditorTree().getOrderedChildren(this);
 	}
 
 }

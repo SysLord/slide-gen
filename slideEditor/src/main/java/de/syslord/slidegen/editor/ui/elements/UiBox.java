@@ -1,16 +1,17 @@
-package de.syslord.slidegen.editor.base;
+package de.syslord.slidegen.editor.ui.elements;
 
 import java.util.Optional;
 
-import com.vaadin.data.Property;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.AbsoluteLayout.ComponentPosition;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 
-import de.syslord.slidegen.editor.model.UiBoxStyleData;
+import de.syslord.slidegen.editor.ui.editor.Editor;
+import de.syslord.slidegen.editor.ui.editor.StylableLabel;
 import de.syslord.slidegen.editor.util.Numbers;
+import de.syslord.slidegen.editor.util.Xy;
 
 public abstract class UiBox extends UiObject {
 
@@ -27,6 +28,8 @@ public abstract class UiBox extends UiObject {
 	private AbstractComponent component;
 
 	protected Editor editor;
+
+	protected String name = "";
 
 	protected UiBox(AbstractComponent component, UiBoxStyleData uiBoxStyleData) {
 		this.component = component;
@@ -55,6 +58,10 @@ public abstract class UiBox extends UiObject {
 		return Optional.ofNullable(data);
 	}
 
+	public String getTreeCaption() {
+		return "Any box";
+	}
+
 	public UiBoxStyleData getUiStyleData() {
 		return uiBoxStyleData;
 	}
@@ -67,6 +74,9 @@ public abstract class UiBox extends UiObject {
 		return false;
 	}
 
+	/**
+	 * @return either this or the container of this
+	 */
 	public ContainerBox getContainer() {
 		if (ContainerBox.class.isAssignableFrom(this.getClass())) {
 			return (ContainerBox) this;
@@ -162,11 +172,37 @@ public abstract class UiBox extends UiObject {
 
 	public void remove() {
 		if (!isEditor()) {
-			ContainerBox parent = getParent();
-			AbsoluteLayout containerLayout = parent.getLayout();
+			editor.getEditorTree().removeTreeItem(this);
 
-			containerLayout.removeComponent(component);
+			removeFromParentLayout();
 		}
+	}
+
+	private void removeFromParentLayout() {
+		getParent().getLayout().removeComponent(component);
+	}
+
+	public void move(ContainerBox newParent) {
+		Xy oldAbsolutePosition = getAbsoluteEditorOffset();
+		Xy newAbsolutePosition = newParent.getAbsoluteEditorOffset();
+
+		Xy subtract = oldAbsolutePosition.subtract(newAbsolutePosition);
+		Xy clamped = subtract.clamped(0, getParent().getWidth(), 0, getParent().getHeight());
+
+		removeFromParentLayout();
+		newParent.moveInsert(this, clamped.getX(), clamped.getY());
+	}
+
+	protected Xy getAbsoluteEditorOffset() {
+		ContainerBox box = this.getParent();
+		int absoluteX = getX();
+		int absoluteY = getY();
+		while (!box.isEditor()) {
+			absoluteX += box.getX();
+			absoluteY += box.getY();
+			box = box.getParent();
+		}
+		return new Xy(absoluteX, absoluteY);
 	}
 
 	public void setX(int x, boolean adding) {
@@ -223,21 +259,30 @@ public abstract class UiBox extends UiObject {
 		return (T) component;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getValue() {
 		if (StylableLabel.class.isAssignableFrom(component.getClass())) {
 			return ((StylableLabel) component).getText();
-		} else if (Property.class.isAssignableFrom(component.getClass())) {
-			return ((Property<String>) component).getValue();
 		}
 		return "";
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setValue(String value) {
-		if (Property.class.isAssignableFrom(Property.class)) {
-			((Property<String>) component).setValue(value);
+		if (StylableLabel.class.isAssignableFrom(component.getClass())) {
+			((StylableLabel) component).setValue(value);
 		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }

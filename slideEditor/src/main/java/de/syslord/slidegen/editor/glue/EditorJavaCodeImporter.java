@@ -7,10 +7,10 @@ import com.google.gwt.thirdparty.guava.common.collect.Maps;
 import de.syslord.boxmodel.HeightProperty;
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.PositionProperty;
-import de.syslord.slidegen.editor.base.ContainerBox;
-import de.syslord.slidegen.editor.base.Editor;
-import de.syslord.slidegen.editor.model.UiBoxStyleData;
 import de.syslord.slidegen.editor.persisting.JavaBoxImporter;
+import de.syslord.slidegen.editor.ui.editor.Editor;
+import de.syslord.slidegen.editor.ui.elements.ContainerBox;
+import de.syslord.slidegen.editor.ui.elements.UiBoxStyleData;
 
 /*
  * Only LayoutableBox is supported, no other types yet. So this is incomplete.

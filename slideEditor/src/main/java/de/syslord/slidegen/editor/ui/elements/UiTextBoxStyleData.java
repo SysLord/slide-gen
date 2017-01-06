@@ -1,4 +1,4 @@
-package de.syslord.slidegen.editor.model;
+package de.syslord.slidegen.editor.ui.elements;
 
 import java.awt.Font;
 

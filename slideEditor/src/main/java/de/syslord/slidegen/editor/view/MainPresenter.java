@@ -16,7 +16,7 @@ import com.vaadin.spring.annotation.UIScope;
 
 import de.syslord.boxmodel.LayoutableBox;
 import de.syslord.boxmodel.generator.ImageGenerator;
-import de.syslord.slidegen.editor.baseui.BasePresenter;
+import de.syslord.slidegen.editor.ui.base.BasePresenter;
 
 @UIScope
 @SpringComponent
