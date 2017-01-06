@@ -119,7 +119,7 @@ public abstract class BaseEditorView<T extends EditorModel> extends BaseView<T> 
 			if (currentlySelectedBox != null) {
 				currentlySelectedBox.setX(KeyboardKey.ARROW_RIGHT.equals(key) ? 20 : -20, true);
 
-				eventBus.fire(new BoxPropertyChangedEvent());
+				eventBus.fire(new BoxPropertyChangedEvent(currentlySelectedBox.getX()));
 			}
 		};
 		Consumer<KeyboardKey> moveUpDown = key -> {

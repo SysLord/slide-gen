@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
@@ -115,7 +116,25 @@ public class MainView extends BaseEditorView<Model> {
 				model.getEditorWidth(), 200,
 				model.getEditorWidth() + 80, model.getEditorHeight() - 200);
 
+		grid.addComponent(createW(), 1, 1);
+
 		initEditableLayout();
+	}
+
+	private Button createW() {
+
+		Button popupButton = new Button("Open popup with MyPopupUI");
+		BrowserWindowOpener popupOpener = new BrowserWindowOpener(MyPopupUI.class);
+		popupOpener.setFeatures("height=300,width=300");
+		popupOpener.extend(popupButton);
+
+		// Add a parameter
+		// popupOpener.setParameter("foo", "bar");
+
+		// Set a fragment
+		// popupOpener.setUriFragment("pop");
+
+		return popupButton;
 	}
 
 	private Panel createTreeWrapper() {

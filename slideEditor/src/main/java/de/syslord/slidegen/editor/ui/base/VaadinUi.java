@@ -42,10 +42,9 @@ public class VaadinUi extends UI {
 		// Navigator navigator = new Navigator(this, this);
 		// navigator.addProvider(viewProvider);
 
-		getUI().setErrorHandler(errorHandler());
+		// getUI().setErrorHandler(errorHandler());
 		// getUI().getNavigator().navigateTo(MainView.VIEW_NAME);
-
-		// ContextWindows.enableContextWindows();
+		getNavigator().setErrorView(mainView);
 
 		setContent(mainView);
 	}

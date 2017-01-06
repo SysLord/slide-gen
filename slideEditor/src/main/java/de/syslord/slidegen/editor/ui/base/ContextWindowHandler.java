@@ -58,7 +58,9 @@ public class ContextWindowHandler {
 
 		UI.getCurrent().addWindow(w);
 
-		w.setPosition(x, y);
+		// w.setPosition(x, y);
+		w.setPositionX(x);
+		w.setPositionY(y);
 		return w;
 	}
 

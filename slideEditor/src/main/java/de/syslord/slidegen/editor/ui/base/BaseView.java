@@ -55,7 +55,9 @@ public abstract class BaseView<T> extends CustomComponent implements View {
 		window.setClosable(false);
 		window.setModal(false);
 
-		window.setPosition(x, y);
+		// window.setPosition(x, y);
+		window.setPositionX(x);
+		window.setPositionY(y);
 		window.setWidth(width, Unit.PIXELS);
 		window.setHeight(height, Unit.PIXELS);
 
