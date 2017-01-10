@@ -17,6 +17,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
+
 public class Renderer {
 
 	public static BufferedImage render(int width, int height, List<RenderableBox> boxes) {
@@ -48,6 +51,8 @@ public class Renderer {
 	}
 
 	private static void drawBackgroundImage(Graphics2D graphics, RenderableBox box) {
+		int targetWidth = box.getWidth();
+		int targetHeight = box.getHeight();
 
 		ByteArrayInputStream backgroundImage = box.getBackgroundImage();
 		backgroundImage.reset();
@@ -58,9 +63,13 @@ public class Renderer {
 			throw new RuntimeException(e);
 		}
 
-		BufferedImage cropped = read.getSubimage(0, 0, box.getWidth(), box.getHeight());
+		if (targetWidth == read.getWidth() && targetHeight == read.getHeight()) {
+			graphics.drawImage(read, box.getX(), box.getY(), targetWidth, targetHeight, null);
+			return;
+		}
 
-		graphics.drawImage(cropped, box.getX(), box.getY(), box.getWidth(), box.getHeight(), null);
+		BufferedImage scaled = Scalr.resize(read, Method.QUALITY, targetWidth, targetHeight);
+		graphics.drawImage(scaled, box.getX(), box.getY(), targetWidth, targetHeight, null);
 	}
 
 	private static void drawLine(Graphics2D graphics, RenderableBox box) {

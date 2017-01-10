@@ -12,8 +12,11 @@ import de.syslord.boxmodel.Lorem;
 import de.syslord.boxmodel.ManualDebuggingImageDisplayer;
 import de.syslord.boxmodel.PositionProperty;
 import de.syslord.boxmodel.TextBox;
+import de.syslord.boxmodel.util.ResourceUtil;
 
 public class ImageGeneratorTest {
+
+	private static final boolean WITH_IMAGES = false;
 
 	@Test
 	public void manuallyTestRenderImage_NoTestAssertYet_NeedsManualInspection() throws Exception {
@@ -39,6 +42,12 @@ public class ImageGeneratorTest {
 
 		nest.addChild(t1);
 		nest.addChild(line);
+
+		if (WITH_IMAGES) {
+			root.setBackgroundImage(ResourceUtil.getResourceAsStream("testimage_medium.png"));
+			nest.setBackgroundImage(ResourceUtil.getResourceAsStream("testimage_large.png"));
+			t1.setBackgroundImage(ResourceUtil.getResourceAsStream("testimage_tiny.png"));
+		}
 
 		BufferedImage generate = ImageGenerator.generate(root);
 

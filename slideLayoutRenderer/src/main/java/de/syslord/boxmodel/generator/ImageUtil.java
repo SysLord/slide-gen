@@ -30,9 +30,7 @@ public class ImageUtil {
 			throws IOException {
 
 		BufferedImage source = ImageIO.read(sourceStream);
-		BufferedImage resize = Scalr.resize(source, Method.QUALITY, targetWidth, targetHeight);
-
-		return resize;
+		return Scalr.resize(source, Method.QUALITY, targetWidth, targetHeight);
 	}
 
 	public static BufferedImage getScaledJpeg(
