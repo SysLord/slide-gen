@@ -23,6 +23,8 @@ public class LayoutableBox {
 
 	protected String name;
 
+	protected String backgroundImageIdentifier;
+
 	protected ByteArrayInputStream backgroundImage;
 
 	protected Color foregroundColor = Color.BLACK;
@@ -348,13 +350,21 @@ public class LayoutableBox {
 		this.priority = priority;
 	}
 
+	public String getBackgroundImageIdentifier() {
+		return backgroundImageIdentifier;
+	}
+
+	public void setBackgroundImageIdentifier(String backgroundImageIdentifier) {
+		this.backgroundImageIdentifier = backgroundImageIdentifier;
+	}
+
 	@Override
 	public String toString() {
-		return "LayoutableBox [name=" + name + ", backgroundImage=" + backgroundImage + ", foregroundColor=" + foregroundColor
-				+ ", x=" + x + ", initialY=" + initialY + ", width=" + width + ", initialHeight=" + initialHeight + ", priority="
-				+ priority + ", styleIdentifier=" + styleIdentifier + ", heightNeeded=" + heightNeeded + ", height=" + height
-				+ ", y=" + y + ", absoluteY=" + absoluteY + ", absoluteX=" + absoluteX + ", visible=" + visible
-				+ ", layoutProperties=" + layoutProperties + ", children=" + children + "]";
+		return "LayoutableBox [layoutProperties=" + layoutProperties + ", children=" + children + ", name=" + name
+				+ ", backgroundImageIdentifier=" + backgroundImageIdentifier + ", foregroundColor=" + foregroundColor + ", x=" + x
+				+ ", initialY=" + initialY + ", width=" + width + ", initialHeight=" + initialHeight + ", priority=" + priority
+				+ ", styleIdentifier=" + styleIdentifier + ", heightNeeded=" + heightNeeded + ", height=" + height + ", y=" + y
+				+ ", absoluteY=" + absoluteY + ", absoluteX=" + absoluteX + ", visible=" + visible + "]";
 	}
 
 }
