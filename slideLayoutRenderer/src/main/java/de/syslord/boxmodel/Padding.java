@@ -14,4 +14,8 @@ public class Padding extends Inset {
 		return new Padding(leftRight, leftRight, topBottom, topBottom);
 	}
 
+	public static Padding create(int left, int right, int top, int bottom) {
+		return new Padding(left, right, top, bottom);
+	}
+
 }
