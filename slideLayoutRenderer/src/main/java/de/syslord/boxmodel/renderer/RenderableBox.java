@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 
 import de.syslord.boxmodel.Margin;
 import de.syslord.boxmodel.Padding;
+import de.syslord.boxmodel.ImageScaling;
 
 public interface RenderableBox {
 
@@ -43,6 +44,8 @@ public interface RenderableBox {
 	RenderType getRenderType();
 
 	ByteArrayInputStream getBackgroundImage();
+
+	ImageScaling getBackgroundScaling();
 
 	int getLineThickness();
 

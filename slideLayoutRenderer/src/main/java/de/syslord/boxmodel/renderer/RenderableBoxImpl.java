@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 
 import de.syslord.boxmodel.Margin;
 import de.syslord.boxmodel.Padding;
+import de.syslord.boxmodel.ImageScaling;
 
 //TODO 08.12.2016 needs a proper builder when architecture relatively stable
 public class RenderableBoxImpl implements RenderableBox {
@@ -35,6 +36,8 @@ public class RenderableBoxImpl implements RenderableBox {
 	private ByteArrayInputStream backgroundImage;
 
 	private int lineThickness;
+
+	private ImageScaling backgroundScaling = ImageScaling.STRETCH_TO_BOX_DIMENSION;
 
 	public RenderableBoxImpl(int x, int y, int width, int height, boolean visible) {
 		this.x = x;
@@ -161,6 +164,15 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	public void setPadding(Padding padding) {
 		this.padding = padding;
+	}
+
+	@Override
+	public ImageScaling getBackgroundScaling() {
+		return backgroundScaling;
+	}
+
+	public void setBackgroundScaling(ImageScaling backgroundScaling) {
+		this.backgroundScaling = backgroundScaling;
 	}
 
 }

@@ -20,6 +20,8 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 
+import de.syslord.boxmodel.ImageScaling;
+
 public class Renderer {
 
 	public static BufferedImage render(int width, int height, List<RenderableBox> boxes) {
@@ -56,20 +58,59 @@ public class Renderer {
 
 		ByteArrayInputStream backgroundImage = box.getBackgroundImage();
 		backgroundImage.reset();
-		BufferedImage read;
+		BufferedImage image;
 		try {
-			read = ImageIO.read(backgroundImage);
+			image = ImageIO.read(backgroundImage);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
-		if (targetWidth == read.getWidth() && targetHeight == read.getHeight()) {
-			graphics.drawImage(read, box.getX(), box.getY(), targetWidth, targetHeight, null);
+		boolean sizesMatchExact = targetWidth == image.getWidth() && targetHeight == image.getHeight();
+		if (sizesMatchExact) {
+			graphics.drawImage(image, box.getX(), box.getY(), targetWidth, targetHeight, null);
 			return;
 		}
 
-		BufferedImage scaled = Scalr.resize(read, Method.QUALITY, targetWidth, targetHeight);
-		graphics.drawImage(scaled, box.getX(), box.getY(), targetWidth, targetHeight, null);
+		drawBackgroundScaled(box, image, graphics);
+	}
+
+	private static void drawBackgroundScaled(RenderableBox box, BufferedImage image, Graphics2D graphics) {
+		int targetWidth = box.getWidth();
+		int targetHeight = box.getHeight();
+		ImageScaling scalingProperty = box.getBackgroundScaling();
+
+		if (ImageScaling.STRETCH_PROPORTIONALLY_CENTERED.equals(scalingProperty)) {
+			double ratio = image.getWidth() / (double) image.getHeight();
+
+			int newWidth;
+			int newHeight;
+
+			boolean widthLargest = image.getWidth() > image.getHeight();
+			if (widthLargest) {
+				newWidth = targetWidth;
+				newHeight = (int) (targetWidth * (1 / ratio));
+			} else {
+				newWidth = (int) (ratio * targetHeight);
+				newHeight = targetHeight;
+			}
+
+			BufferedImage scaled = Scalr.resize(image, Method.QUALITY, newWidth, newHeight);
+
+			int x = box.getX() + (targetWidth - newWidth) / 2;
+			int y = box.getY() + (targetHeight - newHeight) / 2;
+			graphics.drawImage(scaled, x, y, newWidth, newHeight, null);
+
+		} else if (ImageScaling.STRETCH_TO_BOX_DIMENSION.equals(scalingProperty)) {
+			BufferedImage scaled = Scalr.resize(image, Method.QUALITY, targetWidth, targetHeight);
+			graphics.drawImage(scaled, box.getX(), box.getY(), targetWidth, targetHeight, null);
+
+		} else if (ImageScaling.ORIGINAL_SIZE_CUT.equals(scalingProperty)) {
+			BufferedImage cropped = image.getSubimage(0, 0,
+					Math.min(targetWidth, image.getWidth()),
+					Math.min(targetHeight, image.getHeight()));
+
+			graphics.drawImage(cropped, box.getX(), box.getY(), targetWidth, targetHeight, null);
+		}
 	}
 
 	private static void drawLine(Graphics2D graphics, RenderableBox box) {

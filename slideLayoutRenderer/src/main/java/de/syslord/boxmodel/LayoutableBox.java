@@ -27,6 +27,8 @@ public class LayoutableBox {
 
 	protected ByteArrayInputStream backgroundImage;
 
+	protected ImageScaling backgroundScaling;
+
 	protected Color foregroundColor = Color.BLACK;
 
 	// fix values
@@ -107,6 +109,7 @@ public class LayoutableBox {
 
 		renderableBoxImpl.setColor(foregroundColor);
 		renderableBoxImpl.setBackgroundImage(backgroundImage);
+		renderableBoxImpl.setBackgroundScaling(backgroundScaling);
 
 		renderableBoxImpl.setRenderType(RenderType.BOX);
 		return renderableBoxImpl;
@@ -365,6 +368,10 @@ public class LayoutableBox {
 				+ ", initialY=" + initialY + ", width=" + width + ", initialHeight=" + initialHeight + ", priority=" + priority
 				+ ", styleIdentifier=" + styleIdentifier + ", heightNeeded=" + heightNeeded + ", height=" + height + ", y=" + y
 				+ ", absoluteY=" + absoluteY + ", absoluteX=" + absoluteX + ", visible=" + visible + "]";
+	}
+
+	public void setBackgroundScaling(ImageScaling backgroundScaling) {
+		this.backgroundScaling = backgroundScaling;
 	}
 
 }
