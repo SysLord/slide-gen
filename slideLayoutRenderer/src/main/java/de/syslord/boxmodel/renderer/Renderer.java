@@ -56,6 +56,10 @@ public class Renderer {
 		int targetWidth = box.getWidth();
 		int targetHeight = box.getHeight();
 
+		if (targetHeight <= 0 || targetWidth <= 0) {
+			return;
+		}
+
 		ByteArrayInputStream backgroundImage = box.getBackgroundImage();
 		backgroundImage.reset();
 		BufferedImage image;
@@ -80,17 +84,20 @@ public class Renderer {
 		ImageScaling scalingProperty = box.getBackgroundScaling();
 
 		if (ImageScaling.STRETCH_PROPORTIONALLY_CENTERED.equals(scalingProperty)) {
-			double ratio = image.getWidth() / (double) image.getHeight();
+			double imageRatio = image.getWidth() / (double) image.getHeight();
+			double boundingBoxRatio = targetWidth / (double) targetHeight;
 
 			int newWidth;
 			int newHeight;
-
-			boolean widthLargest = image.getWidth() > image.getHeight();
-			if (widthLargest) {
+			// image is wider, box is higher. image touches bounding box left and right. image width needs to
+			// be box width.
+			if (imageRatio > boundingBoxRatio) {
 				newWidth = targetWidth;
-				newHeight = (int) (targetWidth * (1 / ratio));
+				newHeight = (int) (targetWidth / imageRatio);
 			} else {
-				newWidth = (int) (ratio * targetHeight);
+				// image is higher, box is wider. image touches bounding box top and bottom. image height
+				// needs to be box height.
+				newWidth = (int) (imageRatio * targetHeight);
 				newHeight = targetHeight;
 			}
 
