@@ -110,6 +110,8 @@ public class Renderer {
 					Math.min(targetHeight, image.getHeight()));
 
 			graphics.drawImage(cropped, box.getX(), box.getY(), targetWidth, targetHeight, null);
+		} else {
+			throw new RuntimeException("No background scaling defined.");
 		}
 	}
 

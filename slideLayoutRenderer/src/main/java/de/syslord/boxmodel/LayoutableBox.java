@@ -27,7 +27,7 @@ public class LayoutableBox {
 
 	protected ByteArrayInputStream backgroundImage;
 
-	protected ImageScaling backgroundScaling;
+	protected ImageScaling backgroundScaling = ImageScaling.STRETCH_TO_BOX_DIMENSION;
 
 	protected Color foregroundColor = Color.BLACK;
 
