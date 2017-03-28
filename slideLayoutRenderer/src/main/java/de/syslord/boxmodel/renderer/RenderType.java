@@ -4,6 +4,7 @@ public enum RenderType {
 
 	BOX,
 	TEXT,
+	HTML,
 	LINE;
 
 }

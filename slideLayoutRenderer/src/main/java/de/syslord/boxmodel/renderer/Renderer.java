@@ -21,6 +21,7 @@ import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 
 import de.syslord.boxmodel.ImageScaling;
+import de.syslord.boxmodel.renderer.html.PrimitiveHtmlScanner;
 
 public class Renderer {
 
@@ -44,6 +45,8 @@ public class Renderer {
 
 			if (box.getRenderType().equals(RenderType.TEXT)) {
 				drawText(graphics, box);
+			} else if (box.getRenderType().equals(RenderType.HTML)) {
+				drawHtml(graphics, box);
 			} else if (box.getRenderType().equals(RenderType.LINE)) {
 				drawLine(graphics, box);
 			}
@@ -140,6 +143,18 @@ public class Renderer {
 
 		AttributedString attributedString = new AttributedString(box.getContent());
 		attributedString.addAttribute(TextAttribute.FONT, box.getFont());
+
+		drawAutoLinebreakString(attributedString, box.getContent(), graphics, box);
+	}
+
+	private static void drawHtml(Graphics2D graphics, RenderableBox box) {
+		if (box.getContent() == null || box.getContent().isEmpty()) {
+			return;
+		}
+
+		graphics.setColor(box.getColor());
+
+		AttributedString attributedString = PrimitiveHtmlScanner.generateAttributedString(box.getContent(), box.getFont());
 
 		drawAutoLinebreakString(attributedString, box.getContent(), graphics, box);
 	}

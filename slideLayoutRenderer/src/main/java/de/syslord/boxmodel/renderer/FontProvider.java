@@ -10,4 +10,9 @@ public class FontProvider {
 		return new Font(decode.getName(), Font.PLAIN, 15);
 	}
 
+	public static Font getStyled(Font font, boolean bold, boolean italic) {
+		int style = (bold ? Font.BOLD : 0) | (italic ? Font.ITALIC : 0);
+		return new Font(font.getName(), style, font.getSize());
+	}
+
 }

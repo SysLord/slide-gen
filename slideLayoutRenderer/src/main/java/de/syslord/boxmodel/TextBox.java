@@ -16,6 +16,8 @@ public class TextBox extends LayoutableBox {
 
 	private Padding padding = Padding.noPadding();
 
+	private boolean htmlMode = false;
+
 	public TextBox(String name, String content, int x, int y, int width, int height) {
 		super(name, x, y, width, height);
 		this.content = content;
@@ -25,7 +27,7 @@ public class TextBox extends LayoutableBox {
 	public RenderableBoxImpl toRenderable() {
 		RenderableBoxImpl renderableBoxImpl = super.toRenderable();
 
-		renderableBoxImpl.setRenderType(RenderType.TEXT);
+		renderableBoxImpl.setRenderType(htmlMode ? RenderType.HTML : RenderType.TEXT);
 		renderableBoxImpl.setContent(content);
 		renderableBoxImpl.setFont(font);
 
@@ -76,6 +78,10 @@ public class TextBox extends LayoutableBox {
 
 	public void setPadding(Padding padding) {
 		this.padding = padding;
+	}
+
+	public void setHtmlMode(boolean htmlMode) {
+		this.htmlMode = htmlMode;
 	}
 
 }
