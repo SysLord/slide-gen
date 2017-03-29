@@ -23,6 +23,13 @@ public class TextBox extends LayoutableBox {
 		this.content = content;
 	}
 
+	public static TextBox createFixedHeightTextBox(String name, String content, int x, int y, int width, int height) {
+		TextBox box = new TextBox(name, content, x, y, width, height);
+		box.setProp(HeightProperty.MIN, height);
+		box.setProp(HeightProperty.MAX, height);
+		return box;
+	}
+
 	@Override
 	public RenderableBoxImpl toRenderable() {
 		RenderableBoxImpl renderableBoxImpl = super.toRenderable();
