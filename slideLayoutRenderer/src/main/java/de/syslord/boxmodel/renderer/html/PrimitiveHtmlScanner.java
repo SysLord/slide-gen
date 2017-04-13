@@ -24,25 +24,27 @@ import de.syslord.boxmodel.renderer.FontProvider;
  */
 public class PrimitiveHtmlScanner {
 
-	public static AttributedString generateAttributedString(String html, Font font) {
+	public static HtmlScannerResult generateAttributedString(String html, Font font) {
 
-		List<AttributedStringInfo> parse = parse(html);
-		AttributedString attributedString = toAttributedString(parse, font);
+		List<AttributedStringInfo> attributedStringInfos = parse(html);
 
-		return attributedString;
+		String plainText = getPlainText(attributedStringInfos);
+
+		AttributedString attributedString = toAttributedString(attributedStringInfos, plainText, font);
+
+		return new HtmlScannerResult(plainText, attributedString);
 	}
 
-	private static AttributedString toAttributedString(List<AttributedStringInfo> parse, Font font) {
+	private static AttributedString toAttributedString(
+			List<AttributedStringInfo> attributedStringInfos,
+			String plainText,
+			Font font) {
 
-		String wholeString = parse.stream()
-			.map(info -> info.getString())
-			.collect(Collectors.joining());
-
-		AttributedString attributedString = new AttributedString(wholeString);
+		AttributedString attributedString = new AttributedString(plainText);
 		attributedString.addAttribute(TextAttribute.FONT, font);
 
 		int index = 0;
-		for (AttributedStringInfo info : parse) {
+		for (AttributedStringInfo info : attributedStringInfos) {
 			int length = info.getLength();
 
 			// i don't know what kind of Font is required to make make TextAttribute.WEIGHT work, so for now
@@ -56,6 +58,13 @@ public class PrimitiveHtmlScanner {
 		}
 
 		return attributedString;
+	}
+
+	private static String getPlainText(List<AttributedStringInfo> attributedStringInfos) {
+		String wholeString = attributedStringInfos.stream()
+			.map(info -> info.getString())
+			.collect(Collectors.joining());
+		return wholeString;
 	}
 
 	protected static List<AttributedStringInfo> parse(String simpleHtml) {

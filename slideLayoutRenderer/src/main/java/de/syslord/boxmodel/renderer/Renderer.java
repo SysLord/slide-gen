@@ -21,6 +21,7 @@ import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 
 import de.syslord.boxmodel.ImageScaling;
+import de.syslord.boxmodel.renderer.html.HtmlScannerResult;
 import de.syslord.boxmodel.renderer.html.PrimitiveHtmlScanner;
 
 public class Renderer {
@@ -154,9 +155,12 @@ public class Renderer {
 
 		graphics.setColor(box.getColor());
 
-		AttributedString attributedString = PrimitiveHtmlScanner.generateAttributedString(box.getContent(), box.getFont());
+		HtmlScannerResult htmlScannerResult = PrimitiveHtmlScanner.generateAttributedString(box.getContent(), box.getFont());
 
-		drawAutoLinebreakString(attributedString, box.getContent(), graphics, box);
+		drawAutoLinebreakString(
+				htmlScannerResult.getAttributedString(),
+				htmlScannerResult.getPlainText(),
+				graphics, box);
 	}
 
 	private static void drawAutoLinebreakString(

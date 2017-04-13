@@ -2,6 +2,8 @@ package de.syslord.boxmodel.layouter;
 
 import de.syslord.boxmodel.*;
 import de.syslord.boxmodel.renderer.RenderHelper;
+import de.syslord.boxmodel.renderer.html.HtmlScannerResult;
+import de.syslord.boxmodel.renderer.html.PrimitiveHtmlScanner;
 
 public class Layouter {
 
@@ -67,10 +69,13 @@ public class Layouter {
 
 		if (box instanceof TextBox) {
 			TextBox tbox = (TextBox) box;
-			int heightNeeded = RenderHelper.getHeight(tbox.getFont(), tbox.getContent(), tbox.getContentWidth());
+
+			int heightNeeded = calcTextboxHeightNeeded(tbox);
+
 			int spaceNeeded = tbox.getMargin().getVerticalSpaceNeeded() + tbox.getPadding().getVerticalSpaceNeeded();
 
 			box.setHeightNeeded(heightNeeded + spaceNeeded);
+
 		} else if (box instanceof LineBox) {
 			box.setHeightNeeded(box.getInitialHeight());
 		}
@@ -78,6 +83,22 @@ public class Layouter {
 		for (LayoutableBox child : box.getChildren()) {
 			calcHeightNeeded(box, child);
 		}
+	}
+
+	private static int calcTextboxHeightNeeded(TextBox tbox) {
+
+		if (tbox.isHtmlMode()) {
+			HtmlScannerResult htmlScannerResult = PrimitiveHtmlScanner.generateAttributedString(
+					tbox.getContent(),
+					tbox.getFont());
+
+			return RenderHelper.getHeight(
+					htmlScannerResult.getAttributedString(),
+					htmlScannerResult.getPlainText(),
+					tbox.getContentWidth());
+		}
+
+		return RenderHelper.getHeight(tbox.getFont(), tbox.getContent(), tbox.getContentWidth());
 	}
 
 	private static void applyStretchChildrenToLargestSibling_TopDown(LayoutableBox parent, LayoutableBox box) {

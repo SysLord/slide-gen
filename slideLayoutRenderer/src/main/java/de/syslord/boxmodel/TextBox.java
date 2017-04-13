@@ -91,4 +91,8 @@ public class TextBox extends LayoutableBox {
 		this.htmlMode = htmlMode;
 	}
 
+	public boolean isHtmlMode() {
+		return htmlMode;
+	}
+
 }

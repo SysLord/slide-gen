@@ -20,10 +20,18 @@ public class RenderHelper {
 			return 0;
 		}
 
-		Graphics2D graphics = getGraphics(IMG);
-
 		AttributedString attributedString = new AttributedString(content);
 		attributedString.addAttribute(TextAttribute.FONT, font);
+
+		return getHeight(attributedString, content, width);
+	}
+
+	public static int getHeight(AttributedString attributedString, String content, int width) {
+		if (content == null || content.isEmpty()) {
+			return 0;
+		}
+
+		Graphics2D graphics = getGraphics(IMG);
 
 		float y = 0;
 

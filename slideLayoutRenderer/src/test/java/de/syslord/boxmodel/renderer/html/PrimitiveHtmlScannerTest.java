@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.syslord.boxmodel.renderer.FontProvider;
+
 public class PrimitiveHtmlScannerTest {
 
 	@Test
@@ -17,6 +19,16 @@ public class PrimitiveHtmlScannerTest {
 
 		assertEquals(new AttributedStringInfo("italic", false, true), infos.get(2));
 		assertEquals(new AttributedStringInfo("bolditalic", true, true), infos.get(3));
+	}
+
+	@Test
+	public void testPlainText() throws Exception {
+		HtmlScannerResult htmlScannerResult = PrimitiveHtmlScanner
+			.generateAttributedString(
+					"normal<b>bold</b><i>italic</i><b><i>bolditalic</i></b>",
+					FontProvider.getDefaultFont());
+
+		assertEquals("normalbolditalicbolditalic", htmlScannerResult.getPlainText());
 	}
 
 }
