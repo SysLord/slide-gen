@@ -84,7 +84,11 @@ public class PrimitiveHtmlScanner {
 			// entering a node
 			@Override
 			public void head(Node node, int depth) {
-				if (isTag(node, "i")) {
+				if (isTag(node, "br")) {
+					AttributedStringInfo attributedStringInfo = new AttributedStringInfo("\n", bold, italic);
+					strings.add(attributedStringInfo);
+
+				} else if (isTag(node, "i")) {
 					italic = true;
 
 				} else if (isTag(node, "b")) {
@@ -93,7 +97,9 @@ public class PrimitiveHtmlScanner {
 				} else if (node instanceof TextNode) {
 					TextNode textNode = (TextNode) node;
 
-					AttributedStringInfo attributedStringInfo = new AttributedStringInfo(textNode.getWholeText(), bold, italic);
+					String wholeText = textNode.getWholeText();
+					String removedNewLines = wholeText.replace("\n", " ");
+					AttributedStringInfo attributedStringInfo = new AttributedStringInfo(removedNewLines, bold, italic);
 					strings.add(attributedStringInfo);
 				}
 			}

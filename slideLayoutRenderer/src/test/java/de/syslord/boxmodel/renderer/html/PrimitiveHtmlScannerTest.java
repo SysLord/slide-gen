@@ -22,6 +22,16 @@ public class PrimitiveHtmlScannerTest {
 	}
 
 	@Test
+	public void testParseLinebreaks() throws Exception {
+		List<AttributedStringInfo> infos = PrimitiveHtmlScanner.parse("line<br>line\nline");
+
+		assertEquals(3, infos.size());
+		assertEquals(new AttributedStringInfo("line", false, false), infos.get(0));
+		assertEquals(new AttributedStringInfo("\n", false, false), infos.get(1));
+		assertEquals(new AttributedStringInfo("line line", false, false), infos.get(2));
+	}
+
+	@Test
 	public void testPlainText() throws Exception {
 		HtmlScannerResult htmlScannerResult = PrimitiveHtmlScanner
 			.generateAttributedString(
