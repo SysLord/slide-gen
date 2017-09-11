@@ -15,4 +15,8 @@ public class FontProvider {
 		return new Font(font.getName(), style, font.getSize());
 	}
 
+	public static Font getStandardStyled(Font font) {
+		return new Font(font.getName(), Font.PLAIN, font.getSize());
+	}
+
 }

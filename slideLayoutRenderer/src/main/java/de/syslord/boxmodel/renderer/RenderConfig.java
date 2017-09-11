@@ -6,4 +6,6 @@ public class RenderConfig {
 
 	public static boolean drawDebugHeights = true;
 
+	public static String ellipsis = "…";
+
 }
