@@ -2,13 +2,13 @@ package de.syslord.boxmodel.renderer;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Paint;
 import java.io.ByteArrayInputStream;
 
+import de.syslord.boxmodel.ImageScaling;
 import de.syslord.boxmodel.Margin;
 import de.syslord.boxmodel.Padding;
-import de.syslord.boxmodel.ImageScaling;
 
-//TODO 08.12.2016 needs a proper builder when architecture relatively stable
 public class RenderableBoxImpl implements RenderableBox {
 
 	private String content = "";
@@ -38,6 +38,12 @@ public class RenderableBoxImpl implements RenderableBox {
 	private int lineThickness;
 
 	private ImageScaling backgroundScaling = ImageScaling.STRETCH_TO_BOX_DIMENSION;
+
+	private Paint textBackgroundColor = null;
+
+	private int textBackgroundPadding = 0;
+
+	private int lineSpacing = 0;
 
 	public RenderableBoxImpl(int x, int y, int width, int height, boolean visible) {
 		this.x = x;
@@ -173,6 +179,33 @@ public class RenderableBoxImpl implements RenderableBox {
 
 	public void setBackgroundScaling(ImageScaling backgroundScaling) {
 		this.backgroundScaling = backgroundScaling;
+	}
+
+	@Override
+	public Paint getTextBackgroundColor() {
+		return textBackgroundColor;
+	}
+
+	public void setTextBackgroundColor(Paint textBackgroundColor) {
+		this.textBackgroundColor = textBackgroundColor;
+	}
+
+	@Override
+	public int getTextBackgroundPadding() {
+		return textBackgroundPadding;
+	}
+
+	public void setTextBackgroundPadding(int textBackgroundPadding) {
+		this.textBackgroundPadding = textBackgroundPadding;
+	}
+
+	public void setLineSpacing(int lineSpacing) {
+		this.lineSpacing = lineSpacing;
+	}
+
+	@Override
+	public int getLineSpacing() {
+		return lineSpacing;
 	}
 
 }

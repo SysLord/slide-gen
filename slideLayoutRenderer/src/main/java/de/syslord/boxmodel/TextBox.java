@@ -1,6 +1,7 @@
 package de.syslord.boxmodel;
 
 import java.awt.Font;
+import java.awt.Paint;
 
 import de.syslord.boxmodel.renderer.FontProvider;
 import de.syslord.boxmodel.renderer.RenderType;
@@ -16,7 +17,13 @@ public class TextBox extends LayoutableBox {
 
 	private Padding padding = Padding.noPadding();
 
+	private Paint textBackgroundColor = null;
+
 	private boolean htmlMode = false;
+
+	private int textBackgroundPadding = 0;
+
+	private int lineSpacing = 0;
 
 	public TextBox(String name, String content, int x, int y, int width, int height) {
 		super(name, x, y, width, height);
@@ -37,6 +44,9 @@ public class TextBox extends LayoutableBox {
 		renderableBoxImpl.setRenderType(htmlMode ? RenderType.HTML : RenderType.TEXT);
 		renderableBoxImpl.setContent(content);
 		renderableBoxImpl.setFont(font);
+		renderableBoxImpl.setTextBackgroundColor(textBackgroundColor);
+		renderableBoxImpl.setTextBackgroundPadding(textBackgroundPadding);
+		renderableBoxImpl.setLineSpacing(lineSpacing);
 
 		renderableBoxImpl.setMargin(margin);
 		renderableBoxImpl.setPadding(padding);
@@ -93,6 +103,30 @@ public class TextBox extends LayoutableBox {
 
 	public boolean isHtmlMode() {
 		return htmlMode;
+	}
+
+	public Paint getTextBackgroundColor() {
+		return textBackgroundColor;
+	}
+
+	public void setTextBackgroundColor(Paint textBackgroundColor) {
+		this.textBackgroundColor = textBackgroundColor;
+	}
+
+	public int getTextBackgroundPadding() {
+		return textBackgroundPadding;
+	}
+
+	public void setTextBackgroundPadding(int textBackgroundPadding) {
+		this.textBackgroundPadding = textBackgroundPadding;
+	}
+
+	public void setLineSpacing(int lineSpacing) {
+		this.lineSpacing = lineSpacing;
+	}
+
+	public int getLineSpacing() {
+		return lineSpacing;
 	}
 
 }

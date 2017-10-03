@@ -5,7 +5,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.spring.annotation.SpringComponent;
 
 import de.syslord.boxmodel.HeightProperty;
@@ -67,19 +66,26 @@ public class EditorExporter {
 	}
 
 	private void exportTextBox(LayoutableBox parentBox, UiTextBox childToExport) {
-		UiTextBoxStyleData styleData = childToExport.getUiTextBoxStyleData();
+		UiTextBoxStyleData textBoxStyleData = childToExport.getUiTextBoxStyleData();
 
 		TextBox box = new TextBox("",
 				childToExport.getValue(),
 				childToExport.getX(), childToExport.getY(),
 				childToExport.getWidth(), childToExport.getHeight());
 
-		box.setFont(styleData.getFont());
-		addUiBoxProperties(styleData, box);
+		box.setFont(textBoxStyleData.getFont());
+		addUiBoxProperties(textBoxStyleData, box);
 
-		// TODO editor can't do all paddings and margins yet
-		box.setPadding(Padding.create(styleData.getPadding(), styleData.getPadding()));
-		box.setMargin(Margin.create(styleData.getMargin(), styleData.getMargin()));
+		box.setPadding(Padding.create(textBoxStyleData.getPadding(), textBoxStyleData.getPadding()));
+		box.setMargin(Margin.create(textBoxStyleData.getMargin(), textBoxStyleData.getMargin()));
+		box.setLineSpacing(textBoxStyleData.getLineSpacing());
+
+		box.setTextBackgroundColor(
+				convertColor(
+						textBoxStyleData.getTextBackgroundColor(),
+						textBoxStyleData.getTextBackgroundColorAlpha()));
+
+		box.setTextBackgroundPadding(textBoxStyleData.getTextBackgroundPadding());
 
 		parentBox.addChild(box);
 	}
@@ -92,9 +98,19 @@ public class EditorExporter {
 		box.setPropIf(PositionProperty.FLOAT_DOWN, uiBox.getFloatDown());
 
 		box.setBackgroundImage(uiBox.getImage());
-		Color vaadinColor = uiBox.getForegroundColor();
 
-		box.setForegroundColor(new java.awt.Color(vaadinColor.getRGB()));
+		box.setForegroundColor(convertColor(uiBox.getForegroundColor()));
+	}
+
+	private java.awt.Color convertColor(com.vaadin.shared.ui.colorpicker.Color vaadinColor) {
+		return new java.awt.Color(vaadinColor.getRGB());
+	}
+
+	private java.awt.Color convertColor(com.vaadin.shared.ui.colorpicker.Color vaadinColor, Integer alpha) {
+		if (alpha == null || alpha == 0) {
+			return null;
+		}
+		return new java.awt.Color(vaadinColor.getRed(), vaadinColor.getGreen(), vaadinColor.getBlue(), alpha);
 	}
 
 }

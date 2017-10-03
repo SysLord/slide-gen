@@ -1,10 +1,15 @@
 package de.syslord.boxmodel.layouter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import de.syslord.boxmodel.*;
+import de.syslord.boxmodel.HeightProperty;
+import de.syslord.boxmodel.LayoutableBox;
+import de.syslord.boxmodel.Lorem;
+import de.syslord.boxmodel.PositionProperty;
+import de.syslord.boxmodel.Stretch;
+import de.syslord.boxmodel.TextBox;
 
 public class LayouterTest {
 
@@ -178,8 +183,9 @@ public class LayouterTest {
 		return new TextBox("", con, 50, y, 500, height);
 	}
 
-	private LayoutableBox[] createWith2Children_HeightYContent(int height1, int y1, String content1, int height2, int y2,
-			String content2) {
+	private LayoutableBox[] createWith2Children_HeightYContent(
+			int height1, int y1, String content1,
+			int height2, int y2, String content2) {
 		LayoutableBox root = createBoxWithHeight(CHILD_ROOT_HEIGHT);
 		root.setProp(HeightProperty.MAX, CHILD_ROOT_HEIGHT);
 		root.setProp(HeightProperty.MIN, CHILD_ROOT_HEIGHT);

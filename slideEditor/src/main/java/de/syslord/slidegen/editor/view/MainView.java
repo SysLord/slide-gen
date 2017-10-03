@@ -22,6 +22,7 @@ import com.vaadin.ui.ColorPickerArea;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -188,6 +189,7 @@ public class MainView extends BaseEditorView<Model> {
 			addTextColorProps(textBox, label);
 			addFontProps(textBox, label);
 			addMarginPaddingProps(textBox, label);
+			addTextBackgroundProps(textBox, label);
 		}
 
 		eventBus.register(this, BoxPropertyChangedEvent.class, boxPropertyChangedListener);
@@ -252,20 +254,59 @@ public class MainView extends BaseEditorView<Model> {
 					textboxStyleData.setPadding(s);
 					label.updateStyle(textboxStyleData);
 				});
-		editorProperties.addProperties(margin, padding);
+
+		TextField lineSpacing = fieldFactory.createIntegerField(
+				"Line Spacing", textboxStyleData.getLineSpacing(),
+				0, 1000,
+				s -> {
+					textboxStyleData.setLineSpacing(s);
+					label.updateStyle(textboxStyleData);
+				});
+		editorProperties.addProperties(margin, padding, lineSpacing);
+	}
+
+	private void addTextBackgroundProps(UiTextBox box, StylableLabel label) {
+		UiTextBoxStyleData textboxStyleData = box.getUiTextBoxStyleData();
+
+		Label colorPickerCaption = new Label("Text Background");
+		ColorPickerArea colorPickerArea = fieldFactory.createColorPickerArea(
+				"Text Background", textboxStyleData.getTextBackgroundColor(),
+				s -> {
+					textboxStyleData.setTextBackgroundColor(s);
+					label.updateStyle(textboxStyleData);
+				});
+
+		TextField alpha = fieldFactory.createNullableIntegerField(
+				"Alpha", textboxStyleData.getTextBackgroundColorAlpha(),
+				0, 255,
+				s -> {
+					textboxStyleData.setTextBackgroundColorAlpha(s);
+					label.updateStyle(textboxStyleData);
+				});
+
+		TextField backgroundPadding = fieldFactory.createIntegerField(
+				"Background Padding", textboxStyleData.getTextBackgroundPadding(),
+				0, 500,
+				s -> {
+					textboxStyleData.setTextBackgroundPadding(s);
+					label.updateStyle(textboxStyleData);
+				});
+
+		editorProperties.addProperties(colorPickerCaption, colorPickerArea, alpha, backgroundPadding);
 	}
 
 	private void addTextColorProps(UiTextBox box, StylableLabel label) {
 		UiTextBoxStyleData textboxStyleData = box.getUiTextBoxStyleData();
 
+		Label colorPickerCaption = new Label("Foreground Color");
 		ColorPickerArea colorPickerArea = fieldFactory.createColorPickerArea(
-				"Float Up", textboxStyleData.getForegroundColor(),
+				"Foreground Color", textboxStyleData.getForegroundColor(),
 				s -> {
 					textboxStyleData.setForegroundColor(s);
 					label.updateStyle(textboxStyleData);
 				});
 
-		editorProperties.addProperties(colorPickerArea);
+		editorProperties.addProperties(colorPickerCaption, colorPickerArea);
 	}
 
 	private void addDynamicPositioningProps(UiBox box) {

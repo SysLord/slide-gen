@@ -3,7 +3,6 @@ package de.syslord.boxmodel.renderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -23,6 +22,7 @@ import org.imgscalr.Scalr.Method;
 import de.syslord.boxmodel.ImageScaling;
 import de.syslord.boxmodel.renderer.html.HtmlScannerResult;
 import de.syslord.boxmodel.renderer.html.PrimitiveHtmlScanner;
+import de.syslord.boxmodel.util.DebugDrawUtil;
 
 public class Renderer {
 
@@ -35,7 +35,7 @@ public class Renderer {
 		graphics.fillRect(0, 0, width, height);
 
 		for (RenderableBox box : boxes) {
-			drawDebugBorders(graphics, box);
+			DebugDrawUtil.drawDebugBorders(graphics, box);
 			if (!box.isVisible()) {
 				continue;
 			}
@@ -140,8 +140,6 @@ public class Renderer {
 			return;
 		}
 
-		graphics.setColor(box.getColor());
-
 		AttributedString attributedString = new AttributedString(box.getContent());
 		attributedString.addAttribute(TextAttribute.FONT, box.getFont());
 
@@ -152,8 +150,6 @@ public class Renderer {
 		if (box.getContent() == null || box.getContent().isEmpty()) {
 			return;
 		}
-
-		graphics.setColor(box.getColor());
 
 		HtmlScannerResult htmlScannerResult = PrimitiveHtmlScanner.generateAttributedString(box.getContent(), box.getFont());
 
@@ -171,6 +167,20 @@ public class Renderer {
 		int contentWidth = box.getContentWidth();
 		int contentHeight = box.getContentHeight();
 
+		// @formatter:off
+		//
+		// All values are baseline-relative!
+		// 0/line origin ------------------
+		//            ^                       <-- some space above normal letters
+		//  /_\  |_)  |      __
+		// /   \ |_) .|...  (__)
+		// ascent/baseline---- |-----------
+		//                  \__/
+		// descent-------------------------
+		// leading (line spacing) ---------   <-- usually very small like 0.9 pixels.
+		//
+		// @formatter:on
+
 		float y = contentY;
 
 		FontRenderContext fontRenderContext = graphics.getFontRenderContext();
@@ -180,43 +190,45 @@ public class Renderer {
 
 		while (lineBreakMeasurer.getPosition() < charIterator.getEndIndex()) {
 			TextLayout layout = RenderHelper.handleTextLinebreaks(text, contentWidth, lineBreakMeasurer);
-			// ignores \n
-			// TextLayout layout = lineBreakMeasurer.nextLayout(contentWidth);
 
-			y += layout.getAscent();
+			final float textTopRelative = 0;
+			final float baselineRelative = layout.getAscent();
+			final float textBottomRelative = baselineRelative + layout.getDescent();
+			final float nextLineRelative = textBottomRelative + layout.getLeading();
 
+			final float textHeight = layout.getAscent() + layout.getDescent();
+
+			final float nextY = y + nextLineRelative + box.getLineSpacing();
+
+			// TODO !!! this may not work anymore.
 			// do not render lines outside of box content area
-			if (y > contentY + contentHeight) {
+			if (y + textBottomRelative > contentY + contentHeight) {
 				break;
 			}
 
-			layout.draw(graphics, contentX, y);
-			y += layout.getDescent() + layout.getLeading();
-		}
-	}
+			// draw textbackground
+			if (box.getTextBackgroundColor() != null) {
 
-	private static void drawDebugBorders(Graphics2D graphics, RenderableBox box) {
-		if (RenderConfig.drawDebugBorders) {
-			Color savedColor = graphics.getColor();
-			Stroke savedStroke = graphics.getStroke();
+				/*
+				 * layout.getBounds()/layout.getPixelBounds are not useful here, because they yield for a line
+				 * like "___" just a bounding box like this "___" while we would like to get the whole height
+				 * like "|||".
+				 */
 
-			graphics.setColor(Color.CYAN);
-			graphics.setStroke(new BasicStroke(4));
-			graphics.drawRect(box.getX(), box.getY(), box.getWidth(), box.getHeight());
+				int paddingSizePixels = box.getTextBackgroundPadding();
+				graphics.setPaint(box.getTextBackgroundColor());
+				graphics.fillRect(
+						contentX - paddingSizePixels,
+						Math.round(y + textTopRelative - paddingSizePixels),
+						Math.round(layout.getVisibleAdvance() + 2 * paddingSizePixels),
+						Math.round(textHeight + 2 * paddingSizePixels));
+			}
 
-			graphics.setColor(savedColor);
-			graphics.setStroke(savedStroke);
-		}
-		if (RenderConfig.drawDebugHeights) {
-			Color savedColor = graphics.getColor();
-			Stroke savedStroke = graphics.getStroke();
+			// draw text relative to baseline
+			graphics.setPaint(box.getColor());
+			layout.draw(graphics, contentX, y + baselineRelative);
 
-			graphics.setColor(Color.BLACK);
-			String format = String.format("x %d y %d h %d", box.getX(), box.getY(), box.getHeight());
-			graphics.drawString(format, box.getX() + box.getWidth() - 100, box.getY() + 20);
-
-			graphics.setColor(savedColor);
-			graphics.setStroke(savedStroke);
+			y = nextY;
 		}
 	}
 

@@ -20,9 +20,9 @@ public class EventBus {
 
 	/*
 	 * Per event(-class) we can have multiple listeners who will be invoked when the event is fired. But the
-	 * mere existance of an instance of a listener does not mean that it must be invoked; only views that are
-	 * attached (clientside visible) must react to an event. So a 'supervising' view must be provided for each
-	 * listener.
+	 * mere existance of an instance of a listener does not mean that it must be invoked; because only views
+	 * that are attached (clientside visible) must react to an event. So a 'supervising' view must be provided
+	 * for each listener, and only when this view is attached, the event will be fired.
 	 */
 	// TODO could be nicer: Map<Consumer<?>, BaseView<?>> -> EventListener<EVENT>
 	private Map<Class<?>, Map<Consumer<?>, BaseView<?>>> eventListeners = Maps.newHashMap();

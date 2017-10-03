@@ -34,6 +34,8 @@ public class StylableLabel extends Label {
 		padding = uiBoxData.getPadding();
 		margin = uiBoxData.getMargin();
 
+		// TODO certain previews are still missing
+
 		setValue(text);
 	}
 

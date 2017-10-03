@@ -2,11 +2,12 @@ package de.syslord.boxmodel.renderer;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Paint;
 import java.io.ByteArrayInputStream;
 
+import de.syslord.boxmodel.ImageScaling;
 import de.syslord.boxmodel.Margin;
 import de.syslord.boxmodel.Padding;
-import de.syslord.boxmodel.ImageScaling;
 
 public interface RenderableBox {
 
@@ -41,6 +42,10 @@ public interface RenderableBox {
 
 	Color getColor();
 
+	Paint getTextBackgroundColor();
+
+	int getTextBackgroundPadding();
+
 	RenderType getRenderType();
 
 	ByteArrayInputStream getBackgroundImage();
@@ -48,5 +53,7 @@ public interface RenderableBox {
 	ImageScaling getBackgroundScaling();
 
 	int getLineThickness();
+
+	int getLineSpacing();
 
 }
